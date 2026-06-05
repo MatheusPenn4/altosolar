@@ -10,7 +10,7 @@ export const COMPANY = {
   // [PREENCHER] dados oficiais para credibilidade/SEO
   addressFull: "Av. [Rua e número], Bairro, Cuiabá - MT, CEP 00000-000",
   cnpj: "00.000.000/0001-00",
-  crea: "CREA-MT 000000",
+  crea: "CREA-MT 69778434115",
   art: "ART registrada para cada projeto",
   geo: { lat: -15.601411, lng: -56.097892 }, // Cuiabá - MT
   openingHours: "Mo-Fr 08:00-18:00, Sa 08:00-12:00",
