@@ -236,7 +236,7 @@ export function Hero() {
         {/* ===== CARDS (2x2, discretos, canto inferior direito — só desktop) ===== */}
         <motion.div
           style={{ x: cardsX, y: cardsY }}
-          className="pointer-events-none absolute bottom-8 right-0 hidden w-[300px] grid-cols-2 gap-3 lg:grid"
+          className="pointer-events-none absolute bottom-8 right-0 hidden w-[380px] grid-cols-2 gap-3 lg:grid"
         >
           {HERO_CARDS.map((c, i) => (
             <motion.div
@@ -254,10 +254,12 @@ export function Hero() {
               }}
               className="glass-hero rounded-xl px-4 py-3"
             >
-              <div className="font-display text-lg font-bold text-grad-blue">
+              <div className="whitespace-nowrap font-display text-base font-bold leading-tight text-grad-blue">
                 {c.value}
               </div>
-              <div className="mt-0.5 text-xs text-muted">{c.label}</div>
+              <div className="mt-0.5 text-xs leading-tight text-muted">
+                {c.label}
+              </div>
             </motion.div>
           ))}
         </motion.div>
