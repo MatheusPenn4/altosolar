@@ -1,0 +1,251 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #050505;
+}
+
+* {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+}
+
+body {
+  background-color: #050505;
+  color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern", "liga", "calt";
+  overflow-x: hidden;
+}
+
+/* Foco acessível e consistente em toda a página */
+:where(a, button, input, [tabindex]):focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #050505,
+    0 0 0 4px rgba(0, 175, 255, 0.6);
+  border-radius: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@layer components {
+  /* Fluid display headings */
+  .h-display {
+    @apply font-display font-bold;
+    font-size: clamp(2.25rem, 5.5vw, 4.5rem);
+    line-height: 1.03;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
+  }
+  .h-section {
+    @apply font-display font-bold;
+    font-size: clamp(1.875rem, 3.6vw, 3rem);
+    line-height: 1.1;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+  .lead {
+    color: #bdbdbd;
+    font-size: clamp(1rem, 1.4vw, 1.2rem);
+    line-height: 1.7;
+    text-wrap: pretty;
+  }
+
+  /* Glassmorphism com sheen interno (acabamento Apple/Linear) */
+  .glass {
+    background: rgba(16, 16, 16, 0.55);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 24px 60px -28px rgba(0, 0, 0, 0.8);
+  }
+  .glass-strong {
+    background: rgba(11, 11, 11, 0.8);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  }
+
+  /* Gradient text */
+  .text-grad-blue {
+    @apply bg-grad-blue bg-clip-text text-transparent;
+  }
+  .text-grad-amber {
+    @apply bg-grad-amber bg-clip-text text-transparent;
+  }
+  .text-grad-mix {
+    @apply bg-grad-mix bg-clip-text text-transparent;
+  }
+
+  /* Eyebrow / pill label */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-hair bg-white/[0.03] px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-muted;
+  }
+}
+
+/* Hero — partículas atmosféricas */
+@keyframes heroParticle {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  18% {
+    opacity: var(--max, 0.6);
+  }
+  82% {
+    opacity: var(--max, 0.6);
+  }
+  100% {
+    transform: translate3d(var(--dx, 6px), var(--dy, -70px), 0);
+    opacity: 0;
+  }
+}
+
+/* Hero — respiração do glow */
+@keyframes heroGlowBreath {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes installPulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+}
+
+@layer utilities {
+  /* Números alinhados (sensação de engenharia/precisão) */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+  .hero-particle {
+    position: absolute;
+    border-radius: 9999px;
+    pointer-events: none;
+    animation: heroParticle var(--dur, 14s) linear infinite;
+    animation-delay: var(--delay, 0s);
+    will-change: transform, opacity;
+  }
+  .hero-glow-breath {
+    animation: heroGlowBreath 7s ease-in-out infinite;
+  }
+  /* Glass premium da hero */
+  .glass-hero {
+    background: rgba(10, 10, 10, 0.35);
+    backdrop-filter: blur(30px) saturate(140%);
+    -webkit-backdrop-filter: blur(30px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 20px 80px rgba(0, 0, 0, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+  /* CTA dourado com brilho dinâmico no hover */
+  .cta-gold {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .cta-gold::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      120deg,
+      transparent 28%,
+      rgba(255, 255, 255, 0.5) 50%,
+      transparent 72%
+    );
+    transform: translateX(-130%);
+    transition: transform 0.7s ease;
+  }
+  .cta-gold:hover::after {
+    transform: translateX(130%);
+  }
+  .install-dot {
+    position: absolute;
+    border-radius: 9999px;
+    background: radial-gradient(circle, #ffc107 0%, #ffa500 60%, rgba(255, 165, 0, 0) 100%);
+    box-shadow: 0 0 8px 2px rgba(255, 165, 0, 0.55);
+    animation: installPulse var(--dur, 2.4s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+    will-change: opacity, transform;
+  }
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 8%,
+      black 92%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 8%,
+      black 92%,
+      transparent
+    );
+  }
+  .glow-blue {
+    box-shadow: 0 0 40px -10px rgba(0, 175, 255, 0.45);
+  }
+  .glow-amber {
+    box-shadow: 0 0 40px -10px rgba(255, 165, 0, 0.45);
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+::-webkit-scrollbar-thumb {
+  background: #1f1f1f;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2a2a2a;
+}
+
+::selection {
+  background: rgba(0, 175, 255, 0.3);
+  color: #fff;
+}
