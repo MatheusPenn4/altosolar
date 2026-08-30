@@ -120,9 +120,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     pdfBuffer = await gerarPdfProposta(dadosPdf);
   } catch (erro) {
     console.error(`Falha ao renderizar o PDF da proposta ${id}:`, erro);
-    // TODO: reverter para uma mensagem genérica depois de diagnosticar a falha em produção.
-    const detalhe = erro instanceof Error ? `${erro.message}\n${erro.stack ?? ""}` : String(erro);
-    return NextResponse.json({ erro: "Falha ao renderizar o PDF da proposta.", detalhe }, { status: 500 });
+    return NextResponse.json({ erro: "Falha ao renderizar o PDF da proposta." }, { status: 500 });
   }
 
   const caminhoStorage = `${id}/v${proximaVersaoNumero}.pdf`;
