@@ -19,6 +19,7 @@ export default async function EditarClientePage({ params }: { params: Promise<{ 
         <p className="text-sm text-slate-500">{cliente.nome_razao_social}</p>
       </div>
       <ClienteForm
+        clienteId={cliente.id}
         valoresIniciais={{
           id: cliente.id,
           tipoPessoa: cliente.tipo_pessoa,

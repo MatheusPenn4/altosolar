@@ -14,6 +14,11 @@ export interface ClienteResumo {
   cpf_cnpj: string | null;
   cidade: string | null;
   tipo_pessoa: "fisica" | "juridica";
+  tipo_instalacao?: string | null;
+  tipo_ligacao?: string | null;
+  consumo_medio_kwh?: number | null;
+  consumo_ultimos_12_meses?: number[] | null;
+  tarifa_cents_kwh?: number | null;
 }
 
 export interface ServicoWizard {

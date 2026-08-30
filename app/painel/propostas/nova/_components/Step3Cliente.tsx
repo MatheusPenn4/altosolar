@@ -11,6 +11,7 @@ import { formatarCpfCnpj, formatarTelefone } from "@/lib/format";
 import { ESTADOS_BR } from "@/lib/schemas/cliente";
 import type { ClienteFormValues } from "@/lib/schemas/cliente";
 import type { EstadoWizard, ClienteResumo } from "./tipos";
+import { FaturaEnergiaUpload } from "./FaturaEnergiaUpload";
 
 export function Step3Cliente({
   estado,
@@ -86,6 +87,32 @@ export function Step3Cliente({
     avancar();
   }
 
+  /** Ao selecionar um cliente que já tem perfil energético salvo (de uma fatura
+   * analisada antes), puxa esses dados direto para a etapa de Projeto — sem
+   * precisar reanexar a fatura. */
+  function selecionarCliente(c: ClienteResumo) {
+    const temPerfil =
+      c.tipo_ligacao || c.consumo_medio_kwh || c.tarifa_cents_kwh || c.consumo_ultimos_12_meses?.length;
+
+    if (!temPerfil) {
+      atualizar({ clienteSelecionado: c });
+      return;
+    }
+
+    atualizar({
+      clienteSelecionado: c,
+      dadosTecnicos: {
+        ...estado.dadosTecnicos,
+        ...(c.tipo_instalacao && { tipoInstalacao: c.tipo_instalacao as EstadoWizard["dadosTecnicos"]["tipoInstalacao"] }),
+        ...(c.tipo_ligacao && { tipoLigacao: c.tipo_ligacao as EstadoWizard["dadosTecnicos"]["tipoLigacao"] }),
+        ...(c.consumo_medio_kwh && { consumoMedioKwh: c.consumo_medio_kwh }),
+        ...(c.tarifa_cents_kwh && { tarifaCentavosKwh: c.tarifa_cents_kwh }),
+        ...(c.consumo_ultimos_12_meses?.length === 12 && { consumoUltimos12Meses: c.consumo_ultimos_12_meses }),
+      },
+    });
+    notificar("sucesso", "Este cliente já tinha dados de consumo salvos — aplicados automaticamente ao projeto.");
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <Card>
@@ -128,7 +155,7 @@ export function Step3Cliente({
                     <button
                       key={c.id}
                       type="button"
-                      onClick={() => atualizar({ clienteSelecionado: c })}
+                      onClick={() => selecionarCliente(c)}
                       className={`flex items-center justify-between rounded-lg border px-4 py-3 text-left text-sm transition-colors ${
                         selecionado ? "border-brand-blue bg-brand-blue/5" : "border-slate-200 hover:bg-slate-50"
                       }`}
@@ -228,6 +255,24 @@ export function Step3Cliente({
           </div>
         )}
       </Card>
+
+      {estado.clienteSelecionado && (
+        <FaturaEnergiaUpload
+          clienteId={estado.clienteSelecionado.id}
+          onAplicar={(_fatura, perfil) =>
+            atualizar({
+              dadosTecnicos: {
+                ...estado.dadosTecnicos,
+                ...(perfil.tipoInstalacao && { tipoInstalacao: perfil.tipoInstalacao as EstadoWizard["dadosTecnicos"]["tipoInstalacao"] }),
+                ...(perfil.tipoLigacao && { tipoLigacao: perfil.tipoLigacao as EstadoWizard["dadosTecnicos"]["tipoLigacao"] }),
+                ...(perfil.consumoMedioKwh && { consumoMedioKwh: perfil.consumoMedioKwh }),
+                ...(perfil.tarifaCentavosKwh && { tarifaCentavosKwh: perfil.tarifaCentavosKwh }),
+                ...(perfil.consumoUltimos12Meses && { consumoUltimos12Meses: perfil.consumoUltimos12Meses }),
+              },
+            })
+          }
+        />
+      )}
 
       <div className="flex justify-between">
         <Button variant="outline" onClick={voltar}>Voltar</Button>

@@ -1,7 +1,8 @@
-import { ExternalLink, Info } from "lucide-react";
+import { ExternalLink, Info, KeyRound } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { Card, CardHeader } from "@/app/painel/_components/ui/Card";
+import { Card, CardHeader, Badge } from "@/app/painel/_components/ui/Card";
 import { inicioDoDiaPacificoUTC, proximoResetGeminiUTC } from "@/lib/domain/janelaGeminiPacifico";
+import { obterChavesGemini } from "@/lib/gemini/chaves";
 import { HorarioLocal } from "./HorarioLocal";
 
 export async function UsoGeminiCard({ limiteDiario }: { limiteDiario: number | null }) {
@@ -12,30 +13,31 @@ export async function UsoGeminiCard({ limiteDiario }: { limiteDiario: number | n
   const proximoReset = proximoResetGeminiUTC(agora);
   const inicioMes = new Date(Date.UTC(agora.getUTCFullYear(), agora.getUTCMonth(), 1));
 
-  const [{ count: chamadasHoje }, { count: cacheHoje }, { count: chamadasMes }] = await Promise.all([
-    supabase
-      .from("factory_quotes")
+  function contar(tabela: "factory_quotes" | "client_energy_bills", desde: Date, doCache: boolean) {
+    return supabase
+      .from(tabela)
       .select("id", { count: "exact", head: true })
       .eq("extraction_status", "success")
-      .eq("extraction_from_cache", false)
-      .gte("created_at", inicioHoje.toISOString()),
-    supabase
-      .from("factory_quotes")
-      .select("id", { count: "exact", head: true })
-      .eq("extraction_status", "success")
-      .eq("extraction_from_cache", true)
-      .gte("created_at", inicioHoje.toISOString()),
-    supabase
-      .from("factory_quotes")
-      .select("id", { count: "exact", head: true })
-      .eq("extraction_status", "success")
-      .eq("extraction_from_cache", false)
-      .gte("created_at", inicioMes.toISOString()),
-  ]);
+      .eq("extraction_from_cache", doCache)
+      .gte("created_at", desde.toISOString());
+  }
 
-  const usadasHoje = chamadasHoje ?? 0;
+  const [orcamentosHoje, faturasHoje, orcamentosCacheHoje, faturasCacheHoje, orcamentosMes, faturasMes] =
+    await Promise.all([
+      contar("factory_quotes", inicioHoje, false),
+      contar("client_energy_bills", inicioHoje, false),
+      contar("factory_quotes", inicioHoje, true),
+      contar("client_energy_bills", inicioHoje, true),
+      contar("factory_quotes", inicioMes, false),
+      contar("client_energy_bills", inicioMes, false),
+    ]);
+
+  const usadasHoje = (orcamentosHoje.count ?? 0) + (faturasHoje.count ?? 0);
+  const cacheHoje = (orcamentosCacheHoje.count ?? 0) + (faturasCacheHoje.count ?? 0);
+  const chamadasMes = (orcamentosMes.count ?? 0) + (faturasMes.count ?? 0);
   const restantes = limiteDiario != null ? Math.max(0, limiteDiario - usadasHoje) : null;
   const percentual = limiteDiario ? Math.min(100, Math.round((usadasHoje / limiteDiario) * 100)) : null;
+  const numeroDeChaves = obterChavesGemini().length;
 
   return (
     <Card>
@@ -55,10 +57,19 @@ export async function UsoGeminiCard({ limiteDiario }: { limiteDiario: number | n
         }
       />
 
+      {numeroDeChaves > 1 && (
+        <div className="mb-4 flex items-center gap-1.5">
+          <Badge tone="cyan">
+            <KeyRound className="mr-1 inline h-3 w-3" />
+            {numeroDeChaves} chaves configuradas com fallback automático
+          </Badge>
+        </div>
+      )}
+
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <Metrica label="Chamadas reais hoje" valor={usadasHoje} />
-        <Metrica label="Reaproveitadas do cache hoje" valor={cacheHoje ?? 0} />
-        <Metrica label="Chamadas reais este mês" valor={chamadasMes ?? 0} />
+        <Metrica label="Reaproveitadas do cache hoje" valor={cacheHoje} />
+        <Metrica label="Chamadas reais este mês" valor={chamadasMes} />
         <Metrica
           label="Restantes hoje"
           valor={restantes != null ? restantes : "—"}

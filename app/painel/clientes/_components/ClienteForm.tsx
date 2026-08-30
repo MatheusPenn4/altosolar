@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,16 +12,29 @@ import { Input, Select, TextArea, FieldWrapper } from "@/app/painel/_components/
 import { Card, CardHeader } from "@/app/painel/_components/ui/Card";
 import { useToast } from "@/app/painel/_components/ui/Toast";
 import { ConfirmDialog } from "@/app/painel/_components/ui/ConfirmDialog";
+import { FaturaEnergiaUpload } from "@/app/painel/propostas/nova/_components/FaturaEnergiaUpload";
+import type { PerfilEnergeticoCliente } from "@/lib/domain/perfilEnergetico";
+import type { FaturaExtraida } from "@/lib/gemini/fatura/schema";
 
-export function ClienteForm({ valoresIniciais }: { valoresIniciais?: Partial<ClienteFormValues> }) {
+export function ClienteForm({
+  valoresIniciais,
+  clienteId,
+}: {
+  valoresIniciais?: Partial<ClienteFormValues>;
+  /** Presente só na edição — permite anexar fatura e aplicar direto no cadastro já existente. */
+  clienteId?: string;
+}) {
   const router = useRouter();
   const { notificar } = useToast();
   const [confirmandoSaida, setConfirmandoSaida] = useState(false);
+  const [perfilEnergetico, setPerfilEnergetico] = useState<PerfilEnergeticoCliente | null>(null);
 
   const {
     register,
     control,
     handleSubmit,
+    reset,
+    getValues,
     formState: { errors, isDirty, isSubmitting },
   } = useForm<ClienteFormValues>({
     resolver: zodResolver(clienteSchema),
@@ -32,8 +45,17 @@ export function ClienteForm({ valoresIniciais }: { valoresIniciais?: Partial<Cli
     },
   });
 
+  // Reaplica quando a fatura preenche o formulário (novo cliente) ou quando a
+  // página recarrega com dados atualizados do servidor (edição).
+  useEffect(() => {
+    if (valoresIniciais) {
+      reset({ ...getValues(), ...valoresIniciais });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [valoresIniciais]);
+
   async function onSubmit(valores: ClienteFormValues) {
-    const resultado = await salvarClienteAction(valores);
+    const resultado = await salvarClienteAction(valores, perfilEnergetico ?? undefined);
     if (!resultado.sucesso) {
       notificar("erro", resultado.erro || "Não foi possível salvar o cliente.");
       return;
@@ -41,6 +63,23 @@ export function ClienteForm({ valoresIniciais }: { valoresIniciais?: Partial<Cli
     notificar("sucesso", "Cliente salvo com sucesso.");
     router.push("/painel/clientes");
     router.refresh();
+  }
+
+  function aplicarFatura(fatura: FaturaExtraida, perfil: PerfilEnergeticoCliente) {
+    reset({
+      ...getValues(),
+      ...(fatura.nomeTitular && !getValues("nomeRazaoSocial") && { nomeRazaoSocial: fatura.nomeTitular }),
+      ...(fatura.endereco && !getValues("endereco") && { endereco: fatura.endereco }),
+      ...(fatura.numero && !getValues("numero") && { numero: fatura.numero }),
+      ...(fatura.bairro && !getValues("bairro") && { bairro: fatura.bairro }),
+      ...(fatura.cidade && !getValues("cidade") && { cidade: fatura.cidade }),
+      ...(fatura.estado && !getValues("estado") && { estado: fatura.estado }),
+      ...(fatura.cep && !getValues("cep") && { cep: formatarCEP(fatura.cep) }),
+      ...(fatura.unidadeConsumidora && !getValues("unidadeConsumidora") && { unidadeConsumidora: fatura.unidadeConsumidora }),
+      ...(fatura.concessionaria && !getValues("concessionaria") && { concessionaria: fatura.concessionaria }),
+      ...(fatura.classificacao && !getValues("tipoInstalacao") && { tipoInstalacao: fatura.classificacao }),
+    });
+    setPerfilEnergetico(perfil);
   }
 
   function handleVoltar() {
@@ -53,6 +92,8 @@ export function ClienteForm({ valoresIniciais }: { valoresIniciais?: Partial<Cli
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      <FaturaEnergiaUpload clienteId={clienteId ?? null} onAplicar={aplicarFatura} />
+
       <Card>
         <CardHeader title="Identificação" description="Tipo de pessoa e dados principais." />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
