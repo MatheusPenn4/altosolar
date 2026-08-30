@@ -9,6 +9,13 @@ import { useToast } from "@/app/painel/_components/ui/Toast";
 import { salvarConfiguracoesAction, type ConfiguracoesFormValues } from "../actions";
 import { SERVICOS_PADRAO } from "@/lib/schemas/proposta";
 
+// Um <input type="number"> vazio, com `valueAsNumber: true`, vira NaN — e o Zod
+// rejeita NaN mesmo em campos `.optional()` (não é "ausente", é "presente e inválido").
+// Usa isso em `setValueAs` para os campos numéricos opcionais virarem `undefined`.
+function paraNumeroOuVazio(valor: string): number | undefined {
+  return valor === "" ? undefined : Number(valor);
+}
+
 const LABEL_SERVICO: Record<string, string> = {
   instalacao: "Instalação",
   projeto_eletrico: "Projeto elétrico",
@@ -33,6 +40,7 @@ interface AppSettingsRow {
   default_seller_id: string | null;
   gemini_model: string | null;
   ai_analysis_enabled: boolean | null;
+  gemini_daily_limit: number | null;
   default_services: { chave: string; label: string; incluido: boolean }[] | null;
   default_warranties: Record<string, string> | null;
   default_financial_assumptions: {
@@ -70,6 +78,7 @@ export function ConfiguracoesForm({
       defaultSellerId: settings?.default_seller_id ?? null,
       geminiModel: settings?.gemini_model ?? "",
       aiAnalysisEnabled: settings?.ai_analysis_enabled ?? true,
+      geminiDailyLimit: settings?.gemini_daily_limit ?? null,
       defaultWarranties: settings?.default_warranties ?? {
         instalacao: "12 meses",
         modulos: "12 anos (fabricante)",
@@ -188,13 +197,13 @@ export function ConfiguracoesForm({
 
         <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <FieldWrapper label="Reajuste anual da tarifa (%)" hint="Premissa padrão da simulação financeira.">
-            <Input type="number" step="0.1" {...register("defaultFinancialAssumptions.reajusteAnualPercentual" as const, { valueAsNumber: true })} />
+            <Input type="number" step="0.1" {...register("defaultFinancialAssumptions.reajusteAnualPercentual" as const, { setValueAs: paraNumeroOuVazio })} />
           </FieldWrapper>
           <FieldWrapper label="Degradação anual dos módulos (%)">
-            <Input type="number" step="0.1" {...register("defaultFinancialAssumptions.degradacaoAnualPercentual" as const, { valueAsNumber: true })} />
+            <Input type="number" step="0.1" {...register("defaultFinancialAssumptions.degradacaoAnualPercentual" as const, { setValueAs: paraNumeroOuVazio })} />
           </FieldWrapper>
           <FieldWrapper label="Anos de projeção">
-            <Input type="number" min={0} max={25} {...register("defaultFinancialAssumptions.anosProjecao" as const, { valueAsNumber: true })} />
+            <Input type="number" min={0} max={25} {...register("defaultFinancialAssumptions.anosProjecao" as const, { setValueAs: paraNumeroOuVazio })} />
           </FieldWrapper>
         </div>
       </Card>
@@ -222,7 +231,32 @@ export function ConfiguracoesForm({
             label="Modelo Gemini (referência)"
             hint="Informativo. O modelo realmente utilizado é definido pela variável de ambiente GEMINI_MODEL no servidor."
           >
-            <Input {...register("geminiModel")} placeholder="ex.: gemini-2.5-flash" />
+            <Input {...register("geminiModel")} placeholder="ex.: gemini-3.6-flash" />
+          </FieldWrapper>
+
+          <FieldWrapper
+            label="Limite diário de chamadas (opcional)"
+            hint={
+              <>
+                Consulte o número atual do seu plano em{" "}
+                <a
+                  href="https://aistudio.google.com/usage"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand-blue hover:underline"
+                >
+                  aistudio.google.com/usage
+                </a>
+                . Usado só para estimar o uso abaixo — o Google não confirma esse valor pra gente.
+              </>
+            }
+          >
+            <Input
+              type="number"
+              min={1}
+              {...register("geminiDailyLimit", { setValueAs: (v) => (v === "" ? null : Number(v)) })}
+              placeholder="ex.: 250"
+            />
           </FieldWrapper>
 
           <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">

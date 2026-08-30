@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { ConfiguracoesForm } from "./_components/ConfiguracoesForm";
+import { UsoGeminiCard } from "./_components/UsoGeminiCard";
 
 export const metadata = { title: "Configurações" };
 
@@ -14,6 +15,7 @@ export default async function ConfiguracoesPage() {
         <h1 className="text-2xl font-semibold text-slate-900">Configurações</h1>
         <p className="text-sm text-slate-500">Dados institucionais e padrões usados nas novas propostas.</p>
       </div>
+      <UsoGeminiCard limiteDiario={settings?.gemini_daily_limit ?? null} />
       <ConfiguracoesForm settings={settings} vendedores={vendedores ?? []} />
     </div>
   );

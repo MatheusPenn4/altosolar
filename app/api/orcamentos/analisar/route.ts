@@ -175,6 +175,7 @@ export async function POST(request: NextRequest) {
       extraction_schema_version: VERSAO_SCHEMA_EXTRACAO,
       extraction_raw: orcamento,
       extraction_duration_ms: duracaoMs,
+      extraction_from_cache: deCache,
       created_by: user.id,
     })
     .select("id")

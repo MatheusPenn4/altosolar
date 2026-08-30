@@ -17,6 +17,7 @@ const configuracoesSchema = z.object({
   defaultSellerId: z.string().uuid().nullable().optional(),
   geminiModel: z.string().optional(),
   aiAnalysisEnabled: z.boolean(),
+  geminiDailyLimit: z.number().int().positive().nullable().optional(),
   defaultServices: z.array(z.object({ chave: z.string(), label: z.string(), incluido: z.boolean() })),
   defaultWarranties: z.record(z.string(), z.string()),
   defaultFinancialAssumptions: z.object({
@@ -52,6 +53,7 @@ export async function salvarConfiguracoesAction(valores: ConfiguracoesFormValues
       default_seller_id: v.defaultSellerId || null,
       gemini_model: v.geminiModel || null,
       ai_analysis_enabled: v.aiAnalysisEnabled,
+      gemini_daily_limit: v.geminiDailyLimit || null,
       default_services: v.defaultServices,
       default_warranties: v.defaultWarranties,
       default_financial_assumptions: v.defaultFinancialAssumptions,

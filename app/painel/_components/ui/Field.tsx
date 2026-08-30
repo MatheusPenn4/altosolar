@@ -15,7 +15,7 @@ export function FieldWrapper({
   label?: string;
   htmlFor?: string;
   error?: string;
-  hint?: string;
+  hint?: React.ReactNode;
   required?: boolean;
   children: React.ReactNode;
   className?: string;
