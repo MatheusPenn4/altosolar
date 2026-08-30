@@ -1,0 +1,44 @@
+{
+  "fornecedor": "BelEnergy",
+  "numeroCotacao": "WEB-006638236",
+  "integrador": null,
+  "clienteDestino": null,
+  "emissao": "2026-08-27",
+  "validade": "2026-08-30",
+  "condicaoPagamento": "PIX",
+  "potenciaWp": 17550,
+  "itens": [
+    {
+      "descricao": "Módulo Fotovoltaico 585W",
+      "codigo": null,
+      "fabricante": null,
+      "quantidade": 30,
+      "unidade": "UN",
+      "potenciaUnitariaW": 585,
+      "paginaOrigem": 1,
+      "confianca": 0.95
+    },
+    {
+      "descricao": "Inversor Growatt 10kW",
+      "codigo": null,
+      "fabricante": "Growatt",
+      "quantidade": 1,
+      "unidade": "UN",
+      "potenciaUnitariaW": null,
+      "paginaOrigem": 1,
+      "confianca": 0.95
+    }
+  ],
+  "valores": {
+    "produtosCentavos": 2439866,
+    "freteCentavos": 160412,
+    "seguroCentavos": 0,
+    "icmsCentavos": 0,
+    "ipiCentavos": 0,
+    "stCentavos": 0,
+    "diferencialAliquotaCentavos": 0,
+    "totalCentavos": 2600278
+  },
+  "observacoes": [],
+  "alertas": []
+}
