@@ -1,12 +1,19 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, Zap } from "lucide-react";
 import { Card, CardHeader } from "@/app/painel/_components/ui/Card";
 import { Input, Select, TextArea, FieldWrapper } from "@/app/painel/_components/ui/Field";
 import { Button } from "@/app/painel/_components/ui/Button";
 import { useToast } from "@/app/painel/_components/ui/Toast";
-import { calcularPotenciaTotalW, contaComoModuloFotovoltaico, divergePotencia, formatarKwp } from "@/lib/domain/potencia";
+import {
+  calcularPotenciaTotalW,
+  contaComoModuloFotovoltaico,
+  divergePotencia,
+  formatarKwp,
+  kwpParaWatts,
+  wattsParaKwp,
+} from "@/lib/domain/potencia";
 import { TIPOS_INSTALACAO, TIPOS_LIGACAO, TIPOS_COBERTURA, type DadosTecnicos } from "@/lib/schemas/proposta";
 import type { EstadoWizard } from "./tipos";
 
@@ -52,6 +59,30 @@ export function Step4Projeto({
 
   function set<K extends keyof typeof dt>(campo: K, valor: (typeof dt)[K]) {
     atualizar({ dadosTecnicos: { ...dt, [campo]: valor } });
+  }
+
+  // Potência é sempre exibida/editada em kWp (como em todo o resto do app) e
+  // convertida para watts só ao salvar — evita o erro de digitar "17,55"
+  // pensando em kWp num campo que armazenaria isso como 17,55 W.
+  const [potenciaKwpTexto, setPotenciaKwpTexto] = useState(
+    dt.potenciaPropostaW ? String(wattsParaKwp(dt.potenciaPropostaW)) : ""
+  );
+  const preenchidoAutomaticamente = useRef(false);
+
+  useEffect(() => {
+    if (!dt.potenciaPropostaW && potenciaCalculadaW > 0 && !preenchidoAutomaticamente.current) {
+      preenchidoAutomaticamente.current = true;
+      const kwp = wattsParaKwp(potenciaCalculadaW);
+      setPotenciaKwpTexto(String(kwp));
+      set("potenciaPropostaW", potenciaCalculadaW);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [potenciaCalculadaW]);
+
+  function atualizarPotenciaKwp(texto: string) {
+    setPotenciaKwpTexto(texto);
+    const kwp = Number(texto.replace(",", "."));
+    set("potenciaPropostaW", Number.isFinite(kwp) && kwp > 0 ? kwpParaWatts(kwp) : 0);
   }
 
   function continuar() {
@@ -126,11 +157,12 @@ export function Step4Projeto({
         )}
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FieldWrapper label="Potência proposta (Wp)" required>
+          <FieldWrapper label="Potência proposta (kWp)" required hint="Pré-preenchida com a potência dos módulos — ajuste se necessário.">
             <Input
               type="number"
-              value={dt.potenciaPropostaW ?? ""}
-              onChange={(e) => set("potenciaPropostaW", Number(e.target.value) || 0)}
+              step="0.01"
+              value={potenciaKwpTexto}
+              onChange={(e) => atualizarPotenciaKwp(e.target.value)}
             />
           </FieldWrapper>
           <FieldWrapper label="Área útil necessária (m²)">
