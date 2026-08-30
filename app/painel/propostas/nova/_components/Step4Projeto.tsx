@@ -14,6 +14,7 @@ import {
   kwpParaWatts,
   wattsParaKwp,
 } from "@/lib/domain/potencia";
+import { brlParaCentavos } from "@/lib/domain/money";
 import { TIPOS_INSTALACAO, TIPOS_LIGACAO, TIPOS_COBERTURA, type DadosTecnicos } from "@/lib/schemas/proposta";
 import type { EstadoWizard } from "./tipos";
 
@@ -85,6 +86,22 @@ export function Step4Projeto({
     set("potenciaPropostaW", Number.isFinite(kwp) && kwp > 0 ? kwpParaWatts(kwp) : 0);
   }
 
+  // Aceita "0,95" (formato brasileiro) e não só "0.95" — um <input type="number">
+  // não aceita vírgula, então "6,60" digitado ali virava um valor completamente
+  // diferente do pretendido. Reaproveita o mesmo parser usado nos campos de dinheiro.
+  const [tarifaTexto, setTarifaTexto] = useState(
+    dt.tarifaCentavosKwh ? (dt.tarifaCentavosKwh / 100).toFixed(2) : ""
+  );
+
+  function atualizarTarifa(texto: string) {
+    setTarifaTexto(texto);
+    try {
+      set("tarifaCentavosKwh", brlParaCentavos(texto));
+    } catch {
+      // ignora enquanto o usuário ainda está digitando um valor incompleto
+    }
+  }
+
   function continuar() {
     if (!dt.consumoMedioKwh || !dt.tarifaCentavosKwh || !dt.potenciaPropostaW || !dt.geracaoMensalKwh || !dt.geracaoAnualKwh) {
       notificar("erro", "Preencha os campos obrigatórios do projeto.");
@@ -131,10 +148,10 @@ export function Step4Projeto({
           </FieldWrapper>
           <FieldWrapper label="Tarifa utilizada no cálculo (R$/kWh)" required hint="Informe em reais, ex.: 0,95">
             <Input
-              type="number"
-              step="0.01"
-              value={dt.tarifaCentavosKwh ? (dt.tarifaCentavosKwh / 100).toFixed(2) : ""}
-              onChange={(e) => set("tarifaCentavosKwh", Math.round(Number(e.target.value) * 100) || 0)}
+              inputMode="decimal"
+              value={tarifaTexto}
+              onChange={(e) => atualizarTarifa(e.target.value)}
+              placeholder="0,95"
             />
           </FieldWrapper>
         </div>
