@@ -6,7 +6,7 @@ import { Card, CardHeader } from "@/app/painel/_components/ui/Card";
 import { Input, Select, TextArea, FieldWrapper } from "@/app/painel/_components/ui/Field";
 import { Button } from "@/app/painel/_components/ui/Button";
 import { useToast } from "@/app/painel/_components/ui/Toast";
-import { calcularPotenciaTotalW, divergePotencia, formatarKwp } from "@/lib/domain/potencia";
+import { calcularPotenciaTotalW, contaComoModuloFotovoltaico, divergePotencia, formatarKwp } from "@/lib/domain/potencia";
 import { TIPOS_INSTALACAO, TIPOS_LIGACAO, TIPOS_COBERTURA, type DadosTecnicos } from "@/lib/schemas/proposta";
 import type { EstadoWizard } from "./tipos";
 
@@ -35,7 +35,7 @@ export function Step4Projeto({
   const dt = estado.dadosTecnicos;
 
   const modulosOrcamento = useMemo(
-    () => (estado.orcamento?.itens ?? []).filter((i) => i.potenciaUnitariaW && i.potenciaUnitariaW > 0),
+    () => (estado.orcamento?.itens ?? []).filter((i) => contaComoModuloFotovoltaico(i.descricao, i.potenciaUnitariaW)),
     [estado.orcamento]
   );
 

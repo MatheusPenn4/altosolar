@@ -1,25 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 import { createClient } from "@/lib/supabase/server";
 import { gerarPdfProposta } from "@/lib/pdf/gerar";
 import type { PropostaPdfData } from "@/lib/pdf/types";
 import { BENEFITS } from "@/lib/constants";
+import { LOGO_ALTO_SOLAR_BASE64 } from "@/lib/pdf/logoBase64";
 import type { TechnicalDataProposta, PaymentConditionsProposta, SimulationDataProposta } from "@/lib/supabase/types";
 
 export const runtime = "nodejs";
-
-let logoDataUrlCache: string | null = null;
-async function obterLogoDataUrl(): Promise<string | null> {
-  if (logoDataUrlCache) return logoDataUrlCache;
-  try {
-    const buffer = await readFile(path.join(process.cwd(), "public", "logo.png"));
-    logoDataUrlCache = `data:image/png;base64,${buffer.toString("base64")}`;
-    return logoDataUrlCache;
-  } catch {
-    return null;
-  }
-}
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -79,7 +66,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       whatsapp: settings?.company_whatsapp ?? null,
       email: settings?.company_email ?? null,
       textoInstitucional: settings?.institutional_text ?? null,
-      logoDataUrl: await obterLogoDataUrl(),
+      logoDataUrl: LOGO_ALTO_SOLAR_BASE64,
     },
     projeto: {
       potenciaWp: proposta.potencia_wp ?? 0,
@@ -128,7 +115,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     },
   };
 
-  const pdfBuffer = await gerarPdfProposta(dadosPdf);
+  let pdfBuffer: Buffer;
+  try {
+    pdfBuffer = await gerarPdfProposta(dadosPdf);
+  } catch (erro) {
+    console.error(`Falha ao renderizar o PDF da proposta ${id}:`, erro);
+    return NextResponse.json({ erro: "Falha ao renderizar o PDF da proposta." }, { status: 500 });
+  }
 
   const caminhoStorage = `${id}/v${proximaVersaoNumero}.pdf`;
   const { error: erroUpload } = await supabase.storage

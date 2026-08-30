@@ -1,5 +1,5 @@
 import type { OrcamentoExtraido } from "@/lib/gemini/schema";
-import { calcularPotenciaTotalW, divergePotencia } from "./potencia";
+import { calcularPotenciaTotalW, contaComoModuloFotovoltaico, divergePotencia } from "./potencia";
 import { somarCentavos } from "./money";
 
 export interface AlertaValidacao {
@@ -59,7 +59,9 @@ export function validarOrcamento(orcamento: OrcamentoExtraido): AlertaValidacao[
     });
   }
 
-  const modulos = orcamento.itens.filter((item) => item.potenciaUnitariaW && item.potenciaUnitariaW > 0);
+  const modulos = orcamento.itens.filter((item) =>
+    contaComoModuloFotovoltaico(item.descricao, item.potenciaUnitariaW)
+  );
   if (modulos.length === 0) {
     alertas.push({
       campo: "itens",

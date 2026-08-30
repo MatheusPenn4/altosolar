@@ -9,6 +9,19 @@ export interface ModuloFotovoltaico {
   potenciaUnitariaW: number;
 }
 
+/**
+ * Itens que têm potência unitária própria mas NÃO são módulos fotovoltaicos
+ * (inversor, microinversor, otimizador, string box...). O campo "potência (W)"
+ * no orçamento/proposta é preenchido para qualquer equipamento — sem essa
+ * exclusão, a potência do inversor seria somada junto com a dos módulos.
+ */
+const PADRAO_NAO_MODULO = /invers|otimizador|string\s*box/i;
+
+/** Um item conta para a potência do sistema (kWp) somente se for um módulo fotovoltaico. */
+export function contaComoModuloFotovoltaico(descricao: string, potenciaUnitariaW: number | null | undefined): boolean {
+  return !!potenciaUnitariaW && potenciaUnitariaW > 0 && !PADRAO_NAO_MODULO.test(descricao);
+}
+
 /** Soma quantidade × potência unitária de todos os módulos informados, em watts. */
 export function calcularPotenciaTotalW(modulos: ModuloFotovoltaico[]): number {
   return modulos.reduce(

@@ -5,7 +5,7 @@ import { criarPropostaSchema, type CriarPropostaInput } from "@/lib/schemas/prop
 import { calcularPreco, validarAlteracaoManual } from "@/lib/domain/precificacao";
 import { somarCentavos } from "@/lib/domain/money";
 import { extrairAnoESequencial, gerarCodigoProposta } from "@/lib/domain/numeracao";
-import { calcularPotenciaTotalW, divergePotencia } from "@/lib/domain/potencia";
+import { calcularPotenciaTotalW, contaComoModuloFotovoltaico, divergePotencia } from "@/lib/domain/potencia";
 import { simular } from "@/lib/domain/simulacao";
 import { orcamentoExtraidoSchema, type OrcamentoExtraido } from "@/lib/gemini/schema";
 import { validarOrcamento, type AlertaValidacao } from "@/lib/domain/validacaoOrcamento";
@@ -143,7 +143,7 @@ export async function criarPropostaAction(input: CriarPropostaInput): Promise<Re
     valorFinalManualCentavos: dados.precificacao.valorFinalManualCentavos,
   });
 
-  const modulos = dados.equipamentos.filter((e) => e.potenciaUnitariaW);
+  const modulos = dados.equipamentos.filter((e) => contaComoModuloFotovoltaico(e.descricao, e.potenciaUnitariaW));
   const potenciaCalculadaW = calcularPotenciaTotalW(
     modulos.map((m) => ({ quantidade: m.quantidade, potenciaUnitariaW: m.potenciaUnitariaW ?? 0 }))
   );
