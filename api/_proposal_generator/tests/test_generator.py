@@ -63,6 +63,23 @@ def test_missing_client_name_raises():
     assert "client.name" in str(excinfo.value)
 
 
+def test_equipment_table_shrinks_to_fit_many_rows():
+    """Orçamentos reais frequentemente têm mais itens do que a demonstração
+    original (que sempre tinha 6). A tabela deve encolher altura/fonte em vez
+    de falhar — regressão do bug reportado em produção com 12 itens."""
+    data = load("realistic-many-items-data.json")
+    assert len(data["equipment"]["rows"]) == 12
+    result = generate_proposal(data)
+    assert result.pages == 6
+
+
+def test_equipment_table_still_overflows_when_truly_too_many_rows():
+    data = load("realistic-data.json")
+    data["equipment"]["rows"] = data["equipment"]["rows"] * 15  # ~45 itens
+    with pytest.raises(LayoutOverflowError):
+        generate_proposal(data)
+
+
 def test_long_text_overflow_raises():
     data = load("realistic-data.json")
     data["pages"]["2"]["solution_text"] = "Texto muito longo. " * 200

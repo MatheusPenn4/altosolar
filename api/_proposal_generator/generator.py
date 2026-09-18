@@ -565,23 +565,39 @@ def draw_equipment_table(
     )
     top = y + h - table_inset
     col_widths = [w * 0.29, w * 0.52, w * 0.19]
-    header_h = 20
-    row_h = 20
+    num_rows = len(equipment["rows"])
     lowest_allowed = y + 5
-    required_bottom = top - header_h - len(equipment["rows"]) * row_h - area_size - 9
-    if required_bottom < lowest_allowed:
-        raise LayoutOverflowError(
-            f"page_3.equipment_table: {len(equipment['rows'])} linhas ultrapassam o container"
-        )
+
+    # Orçamentos reais podem ter bem mais itens do que a demonstração original
+    # (que assumia sempre 6). Em vez de falhar sempre que a lista é maior,
+    # encolhe a altura de linha/cabeçalho (e a fonte, proporcionalmente) até
+    # um mínimo legível antes de desistir e sinalizar overflow de verdade.
+    DEFAULT_HEADER_H, DEFAULT_ROW_H = 20.0, 20.0
+    MIN_HEADER_H, MIN_ROW_H = 14.0, 9.0
+    available = (top - lowest_allowed) - area_size - 9
+    if DEFAULT_HEADER_H + num_rows * DEFAULT_ROW_H <= available:
+        header_h, row_h = DEFAULT_HEADER_H, DEFAULT_ROW_H
+    else:
+        header_h = MIN_HEADER_H
+        row_h = (available - header_h) / num_rows if num_rows > 0 else 0
+        if row_h < MIN_ROW_H:
+            raise LayoutOverflowError(
+                f"page_3.equipment_table: {num_rows} linhas ultrapassam o container "
+                f"mesmo no tamanho mínimo de linha ({MIN_ROW_H} pt)"
+            )
+    header_size = header_size if header_h >= 18 else max(6.0, header_size * (header_h / DEFAULT_HEADER_H))
+    row_size = row_size if row_h >= 18 else max(5.5, row_size * (row_h / DEFAULT_ROW_H))
+    row_max_lines = 2 if row_h >= 16 else 1
+
     c.setFillColor(NAVY)
     c.roundRect(x, top - header_h, w, header_h, 3, fill=1, stroke=0)
     cursor = x
     for header, col_w in zip(equipment["headers"], col_widths):
         c.setFillColor(white)
         draw_wrapped(
-            c, header, cursor + 6, top - 6, col_w - 12,
+            c, header, cursor + 6, top - min(6.0, header_h * 0.35), col_w - 12,
             "ProposalSans-Bold", header_size, white, max_lines=1,
-            min_size=7, field_name=f"page_3.equipment_table.header.{header}",
+            min_size=6.0, field_name=f"page_3.equipment_table.header.{header}",
         )
         cursor += col_w
     for index, row in enumerate(equipment["rows"]):
@@ -592,9 +608,9 @@ def draw_equipment_table(
         cursor = x
         for column_index, (value, col_w) in enumerate(zip(row, col_widths), 1):
             draw_wrapped(
-                c, value, cursor + 6, row_top - 3, col_w - 12,
-                "ProposalSans", row_size, INK, leading=row_size * 1.15, max_lines=2,
-                min_size=6.5,
+                c, value, cursor + 6, row_top - min(3.0, row_h * 0.25), col_w - 12,
+                "ProposalSans", row_size, INK, leading=row_size * 1.15, max_lines=row_max_lines,
+                min_size=5.0,
                 field_name=f"page_3.equipment_table.row_{index + 1}.column_{column_index}",
             )
             cursor += col_w
@@ -603,7 +619,7 @@ def draw_equipment_table(
         c.line(x, row_top - row_h, x + w, row_top - row_h)
     c.setFillColor(CYAN_DARK)
     c.setFont("ProposalSans-Bold", area_size)
-    c.drawString(x + 6, top - header_h - len(equipment["rows"]) * row_h - 8, equipment["area_label"])
+    c.drawString(x + 6, top - header_h - num_rows * row_h - 8, equipment["area_label"])
 
 
 def draw_page_3(c: canvas.Canvas, data: dict, fields: dict, logo_path: Path) -> None:
