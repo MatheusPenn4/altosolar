@@ -1,6 +1,16 @@
 import { GoogleGenAI } from "@google/genai";
 import type { ZodType } from "zod";
-import { obterChavesGemini, pareceEsgotamentoDeCota } from "./chaves";
+import { obterChavesGemini, pareceEsgotamentoDeCota, pareceErroTransitorio } from "./chaves";
+
+const ATRASO_BASE_MS = 600;
+
+function aguardar(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+const MENSAGEM_SOBRECARGA =
+  "O serviço de IA do Google (Gemini) está com alta demanda no momento e não respondeu mesmo após várias tentativas. " +
+  "Tente novamente em alguns minutos, ou use o preenchimento manual.";
 
 export interface ResultadoExtracaoGenerica<T> {
   sucesso: boolean;
@@ -77,15 +87,23 @@ export async function executarExtracaoGemini<T>(opcoes: {
         if (pareceEsgotamentoDeCota(mensagem)) {
           break; // essa chave esgotou — não adianta tentar de novo, passa para a próxima
         }
+        // Sobrecarga/indisponibilidade momentânea (ex.: 503 UNAVAILABLE) costuma
+        // se resolver sozinha — vale esperar um pouco antes de tentar de novo,
+        // em vez de bater na API imediatamente e falhar do mesmo jeito.
+        if (pareceErroTransitorio(mensagem) && tentativa < maxTentativas) {
+          await aguardar(ATRASO_BASE_MS * tentativa);
+        }
         // outro tipo de erro: mais uma tentativa com a mesma chave antes de desistir dela
       }
     }
   }
 
+  const erroFinal = ultimoErro && pareceErroTransitorio(ultimoErro) ? MENSAGEM_SOBRECARGA : ultimoErro;
+
   return {
     sucesso: false,
     dados: null,
-    erro: ultimoErro ?? "Falha ao extrair dados do documento.",
+    erro: erroFinal ?? "Falha ao extrair dados do documento.",
     modelo,
     duracaoMs: Date.now() - inicio,
   };

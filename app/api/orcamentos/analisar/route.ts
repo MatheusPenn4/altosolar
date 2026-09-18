@@ -7,6 +7,7 @@ import { VERSAO_PROMPT_EXTRACAO } from "@/lib/gemini/prompt";
 import { validarOrcamento } from "@/lib/domain/validacaoOrcamento";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 const TAMANHO_MAXIMO_BYTES = 15 * 1024 * 1024; // 15 MB — mesmo limite do bucket de Storage
 const ASSINATURA_PDF = Buffer.from("%PDF-");

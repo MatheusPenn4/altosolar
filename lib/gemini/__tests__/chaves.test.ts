@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { obterChavesGemini, pareceEsgotamentoDeCota } from "../chaves";
+import { obterChavesGemini, pareceEsgotamentoDeCota, pareceErroTransitorio } from "../chaves";
 
 describe("obterChavesGemini", () => {
   afterEach(() => {
@@ -40,5 +40,21 @@ describe("pareceEsgotamentoDeCota", () => {
   it("não confunde outros erros com esgotamento de cota", () => {
     expect(pareceEsgotamentoDeCota("model not found")).toBe(false);
     expect(pareceEsgotamentoDeCota("invalid PDF")).toBe(false);
+  });
+});
+
+describe("pareceErroTransitorio", () => {
+  it("reconhece sobrecarga/indisponibilidade momentânea do Gemini", () => {
+    expect(
+      pareceErroTransitorio('{"error":{"code":503,"message":"...high demand...","status":"UNAVAILABLE"}}')
+    ).toBe(true);
+    expect(pareceErroTransitorio("The model is overloaded, please try again later")).toBe(true);
+    expect(pareceErroTransitorio("fetch failed")).toBe(true);
+  });
+
+  it("não confunde erro de cota nem erro de dado inválido com transitório", () => {
+    expect(pareceErroTransitorio("429 Too Many Requests - RESOURCE_EXHAUSTED")).toBe(false);
+    expect(pareceErroTransitorio("invalid PDF")).toBe(false);
+    expect(pareceErroTransitorio("Resposta do Gemini não passou na validação do schema")).toBe(false);
   });
 });

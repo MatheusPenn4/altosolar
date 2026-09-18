@@ -6,6 +6,7 @@ import { faturaExtraidaSchema, VERSAO_SCHEMA_FATURA, type FaturaExtraida } from 
 import { VERSAO_PROMPT_FATURA } from "@/lib/gemini/fatura/prompt";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 const TAMANHO_MAXIMO_BYTES = 15 * 1024 * 1024;
 const ASSINATURA_PDF = Buffer.from("%PDF-");
