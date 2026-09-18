@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { extrairOrcamentoDoPdf } from "@/lib/gemini/extrair";
+import { analisarOrcamentoPdf } from "@/lib/ai/documentos/orcamento";
 import { sha256DoArquivo } from "@/lib/gemini/hash";
 import { orcamentoExtraidoSchema, VERSAO_SCHEMA_EXTRACAO, type OrcamentoExtraido } from "@/lib/gemini/schema";
 import { VERSAO_PROMPT_EXTRACAO } from "@/lib/gemini/prompt";
@@ -113,11 +113,11 @@ export async function POST(request: NextRequest) {
   } else {
     let resultado;
     try {
-      resultado = await extrairOrcamentoDoPdf(bytes);
-    } catch (erro) {
+      resultado = await analisarOrcamentoPdf(supabase, bytes, user.id);
+    } catch {
       return NextResponse.json(
         {
-          erro: erro instanceof Error ? erro.message : "Falha ao chamar a API do Gemini.",
+          erro: "Não foi possível analisar o documento no momento. Tente novamente em alguns minutos.",
           modo: "falha_ia",
         },
         { status: 502 }
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
     }
 
     orcamento = resultado.orcamento;
-    modelo = resultado.modelo;
+    modelo = resultado.modelo ?? "desconhecido";
     duracaoMs = resultado.duracaoMs;
   }
 

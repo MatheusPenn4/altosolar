@@ -144,11 +144,50 @@ O modo demonstrativo (`meta.demo_mode: true` no JSON) só existe para testes loc
 produção nunca o ativa, e a validação do PDF rejeita qualquer proposta real que contenha textos
 como "MODELO DEMONSTRATIVO" ou dados do exemplo.
 
+### Inteligência Artificial — AI Manager (análise de orçamentos e faturas)
+
+A extração de dados dos PDFs (orçamento de fábrica e fatura de energia) passa por uma camada
+central em `lib/ai/`, em vez de cada rota chamar o SDK do Gemini diretamente:
+
+```
+lib/ai/
+  gerenciador.ts          seleciona a config disponível, chama o adaptador, decide retry/fallback
+  erros.ts                 classifica erros em: credencial | quota | transitorio | entrada_invalida | parsing
+  credenciais.ts            lista configs cadastradas (com fallback para GEMINI_API_KEY(S) legado)
+  criptografia.ts            AES-256-GCM das API keys (chave em AI_CREDENTIALS_ENCRYPTION_KEY)
+  saude.ts / eventos.ts       atualiza status/cooldown da config e grava o log em ai_events
+  provedores/gemini.ts        único adaptador implementado hoje — novos providers = novo arquivo aqui
+  documentos/{orcamento,fatura}.ts   ligam o AI Manager aos prompts/schemas existentes em lib/gemini/
+```
+
+`lib/gemini/` continua existindo, mas só com o **contrato de extração** (prompt + JSON Schema +
+Zod) de cada documento — não faz mais nenhuma chamada de rede; quem chama o Gemini de fato é
+`lib/ai/provedores/gemini.ts`.
+
+Administração pela tela **Configurações → Inteligência Artificial** (`/painel/configuracoes/
+inteligencia-artificial`, acesso restrito a `profiles.is_admin = true`): cadastro de uma ou mais
+integrações com prioridade, teste de conexão, status/cooldown e log dos últimos eventos. Regras
+globais (fallback automático, tentativas, timeout) ficam em `app_settings` (colunas `ai_*`).
+
+**Compatibilidade**: enquanto nenhuma integração estiver cadastrada na tela, o AI Manager cai
+automaticamente para `GEMINI_API_KEY`/`GEMINI_API_KEYS`/`GEMINI_MODEL` (as mesmas env vars de
+antes) — um deploy já existente não precisa de nenhuma ação manual. Assim que a primeira
+integração for criada pela tela, ela passa a ter prioridade sobre as env vars.
+
+**Após aplicar a migration `0008_gerenciamento_ia.sql`**, promova a primeira conta admin
+manualmente (não há usuário admin padrão):
+
+```sql
+update profiles set is_admin = true where id = '<uuid do seu usuário>';
+```
+
 ### Migrations e Supabase Storage
 
 Migrations em `supabase/migrations/*.sql`, aplicadas manualmente via SQL Editor do Supabase (na
 ordem numérica). A `0007_proposta_template_v2.sql` adiciona `pdf_sha256`, `pdf_size_bytes` e
 `template_version` em `proposal_versions`, além de `last_generation_error(_at)` em `proposals`.
+A `0008_gerenciamento_ia.sql` adiciona o gerenciamento de IA descrito acima (`ai_provider_configs`,
+`ai_events`, `profiles.is_admin` e as colunas `ai_*` de `app_settings`).
 
 O bucket **`propostas-geradas`** (privado, criado em `0003_storage.sql`) guarda os PDFs em
 `{proposalId}/v{versao}.pdf`. RLS segue o mesmo modelo do restante do painel (qualquer usuário

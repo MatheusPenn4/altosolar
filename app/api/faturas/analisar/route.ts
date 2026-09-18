@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { extrairFaturaDoPdf } from "@/lib/gemini/fatura/extrair";
+import { analisarFaturaPdf } from "@/lib/ai/documentos/fatura";
 import { sha256DoArquivo } from "@/lib/gemini/hash";
 import { faturaExtraidaSchema, VERSAO_SCHEMA_FATURA, type FaturaExtraida } from "@/lib/gemini/fatura/schema";
 import { VERSAO_PROMPT_FATURA } from "@/lib/gemini/fatura/prompt";
@@ -91,10 +91,10 @@ export async function POST(request: NextRequest) {
   } else {
     let resultado;
     try {
-      resultado = await extrairFaturaDoPdf(bytes);
-    } catch (erro) {
+      resultado = await analisarFaturaPdf(supabase, bytes, user.id);
+    } catch {
       return NextResponse.json(
-        { erro: erro instanceof Error ? erro.message : "Falha ao chamar a API do Gemini." },
+        { erro: "Não foi possível analisar o documento no momento. Tente novamente em alguns minutos." },
         { status: 502 }
       );
     }
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
     }
 
     fatura = resultado.fatura;
-    modelo = resultado.modelo;
+    modelo = resultado.modelo ?? "desconhecido";
     duracaoMs = resultado.duracaoMs;
   }
 

@@ -74,7 +74,11 @@ export const GEMINI_RESPONSE_SCHEMA = {
           unidade: { type: ["string", "null"] },
           potenciaUnitariaW: { type: ["number", "null"] },
           paginaOrigem: { type: ["integer", "null"] },
-          confianca: { type: "number" },
+          // minimum/maximum alinhados com orcamentoExtraidoSchema (z.number().min(0).max(1))
+          // logo abaixo — sem isso o Gemini podia devolver um valor fora de 0-1, a
+          // validação Zod falhava e o erro era tratado como "JSON malformado",
+          // consumindo uma tentativa de retry à toa.
+          confianca: { type: "number", minimum: 0, maximum: 1 },
         },
         required: ["descricao", "quantidade", "confianca"],
       },

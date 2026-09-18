@@ -2,7 +2,7 @@ import { ExternalLink, Info, KeyRound } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader, Badge } from "@/app/painel/_components/ui/Card";
 import { inicioDoDiaPacificoUTC, proximoResetGeminiUTC } from "@/lib/domain/janelaGeminiPacifico";
-import { obterChavesGemini } from "@/lib/gemini/chaves";
+import { contarConfiguracoesConfiguradas } from "@/lib/ai/credenciais";
 import { HorarioLocal } from "./HorarioLocal";
 
 export async function UsoGeminiCard({ limiteDiario }: { limiteDiario: number | null }) {
@@ -37,7 +37,7 @@ export async function UsoGeminiCard({ limiteDiario }: { limiteDiario: number | n
   const chamadasMes = (orcamentosMes.count ?? 0) + (faturasMes.count ?? 0);
   const restantes = limiteDiario != null ? Math.max(0, limiteDiario - usadasHoje) : null;
   const percentual = limiteDiario ? Math.min(100, Math.round((usadasHoje / limiteDiario) * 100)) : null;
-  const numeroDeChaves = obterChavesGemini().length;
+  const numeroDeChaves = await contarConfiguracoesConfiguradas(supabase);
 
   return (
     <Card>
@@ -61,7 +61,7 @@ export async function UsoGeminiCard({ limiteDiario }: { limiteDiario: number | n
         <div className="mb-4 flex items-center gap-1.5">
           <Badge tone="cyan">
             <KeyRound className="mr-1 inline h-3 w-3" />
-            {numeroDeChaves} chaves configuradas com fallback automático
+            {numeroDeChaves} integrações configuradas com fallback automático
           </Badge>
         </div>
       )}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { orcamentoExtraidoSchema } from "../schema";
+import { orcamentoExtraidoSchema, GEMINI_RESPONSE_SCHEMA } from "../schema";
 import { validarOrcamento } from "@/lib/domain/validacaoOrcamento";
 import { calcularPotenciaTotalW, wattsParaKwp } from "@/lib/domain/potencia";
 import fixtureBelEnergy from "../fixtures/belenergy-referencia.json";
@@ -15,6 +15,27 @@ describe("orcamentoExtraidoSchema — fixture BelEnergy", () => {
     const { valores, ...semValores } = fixtureBelEnergy;
     const resultado = orcamentoExtraidoSchema.safeParse(semValores);
     expect(resultado.success).toBe(false);
+  });
+
+  it("rejeita item com confianca fora de 0–1", () => {
+    const invalido = {
+      ...fixtureBelEnergy,
+      itens: [{ ...fixtureBelEnergy.itens[0], confianca: 1.2 }, ...fixtureBelEnergy.itens.slice(1)],
+    };
+    expect(orcamentoExtraidoSchema.safeParse(invalido).success).toBe(false);
+  });
+});
+
+describe("GEMINI_RESPONSE_SCHEMA — sincronia com orcamentoExtraidoSchema", () => {
+  it("limita confianca a 0–1 no structured output do Gemini, não só no Zod", () => {
+    // Regressão: sem minimum/maximum aqui, o Gemini podia devolver confianca
+    // fora do intervalo, a validação Zod falhava depois e isso era tratado
+    // como "JSON malformado" — consumindo uma tentativa de retry à toa.
+    const propriedadeConfianca = (
+      GEMINI_RESPONSE_SCHEMA.properties.itens.items.properties as { confianca: { minimum?: number; maximum?: number } }
+    ).confianca;
+    expect(propriedadeConfianca.minimum).toBe(0);
+    expect(propriedadeConfianca.maximum).toBe(1);
   });
 });
 
