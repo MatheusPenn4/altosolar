@@ -1,8 +1,6 @@
 {
   "functions": {
     "api/gerar-proposta-pdf.py": {
-      "runtime": "python3.12",
-      "memory": 1024,
       "maxDuration": 30,
       "includeFiles": "api/_proposal_generator/**"
     }

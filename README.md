@@ -172,10 +172,16 @@ amostra a projeção financeira preservando o valor do período analisado.
 
 ### Deploy na Vercel
 
-- `vercel.json` configura a função Python (`api/gerar-proposta-pdf.py`) com runtime
-  `python3.12`, 1024 MB de memória, 30s de timeout e `includeFiles` apontando para
-  `api/_proposal_generator/**` (assets e layout precisam ser empacotados explicitamente — o
-  builder Python da Vercel não faz tracing automático de arquivos estáticos como o do Next.js).
+- `vercel.json` configura a função Python (`api/gerar-proposta-pdf.py`) com 30s de timeout e
+  `includeFiles` apontando para `api/_proposal_generator/**` (assets, layout e o próprio
+  `generator.py`). **Não** defina `runtime` no `vercel.json` para Python — é um runtime
+  suportado oficialmente e detectado automaticamente (versão padrão 3.12); um valor como
+  `"python3.12"` no campo `runtime` só é válido para *community runtimes* (formato
+  `pacote-npm@versão`) e quebra o build com "Function Runtimes must have a valid version".
+  `memory` também não deve ir no `vercel.json` — com Fluid compute habilitado (padrão em contas
+  novas), a memória da função é configurada em Project Settings → Functions, não no arquivo.
+  O diretório `api/_proposal_generator/` começa com `_`, então a Vercel nunca o trata como uma
+  função própria — só como código/assets auxiliares importados por `gerar-proposta-pdf.py`.
 - `requirements.txt` na raiz do repositório é lido automaticamente pela Vercel para instalar as
   dependências Python (`reportlab`, `Pillow`, `pypdf`, `tzdata`).
 - Configure em Project Settings → Environment Variables: todas as variáveis já existentes, mais
