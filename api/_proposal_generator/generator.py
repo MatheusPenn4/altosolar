@@ -235,6 +235,49 @@ def draw_single_line(
     )
 
 
+def draw_ellipsis_line(
+    c: canvas.Canvas,
+    text: str,
+    x: float,
+    baseline: float,
+    width: float,
+    font: str,
+    size: float,
+    color,
+    align: str = "left",
+    field_name: str = "ellipsis_field",
+) -> None:
+    """Desenha sempre em uma única linha, no tamanho de fonte dado (não encolhe
+    fonte). Texto que não caiba é cortado com reticências — usado em tabelas
+    densas (ex.: equipamentos) onde a quantidade de linhas é o fator crítico e
+    uma descrição individual longa não pode forçar a segunda linha de toda a
+    tabela. É um corte visível (reticências), nunca silencioso."""
+    if not isinstance(text, str) or not text.strip():
+        raise LayoutOverflowError(f"{field_name}: texto vazio ou inválido")
+    rendered = text
+    if pdfmetrics.stringWidth(text, font, size) > width:
+        ellipsis = "…"
+        low, high = 0, len(text)
+        best = ellipsis
+        while low <= high:
+            mid = (low + high) // 2
+            candidate = text[:mid].rstrip() + ellipsis
+            if pdfmetrics.stringWidth(candidate, font, size) <= width:
+                best = candidate
+                low = mid + 1
+            else:
+                high = mid - 1
+        rendered = best
+    c.setFont(font, size)
+    c.setFillColor(color)
+    if align == "center":
+        c.drawCentredString(x + width / 2, baseline, rendered)
+    elif align == "right":
+        c.drawRightString(x + width, baseline, rendered)
+    else:
+        c.drawString(x, baseline, rendered)
+
+
 def draw_background(c: canvas.Canvas, image_path: Path) -> None:
     image = ImageReader(str(image_path))
     iw, ih = image.getSize()
@@ -572,42 +615,28 @@ def draw_equipment_table(
     if num_rows == 0 or available <= 0:
         raise LayoutOverflowError("page_3.equipment_table: sem espaço disponível para a tabela")
 
-    # Orçamentos reais variam muito no número de itens e no tamanho das
-    # descrições (a demonstração original assumia sempre 6 itens curtos). Em
-    # vez de uma altura de linha fixa, cada linha ganha 1 ou 2 linhas de texto
-    # conforme o que ela realmente precisa (colunas "Item" e "Fabricante/
-    # modelo"), e o tamanho da fonte só encolhe (até um mínimo legível) se a
-    # soma de todas as linhas ainda não couber no espaço do template.
+    # Orçamentos reais variam muito no número de itens (a demonstração original
+    # assumia sempre 6, itens curtos). Cada linha ocupa sempre UMA linha de
+    # texto — uma descrição longa é cortada com reticências (draw_ellipsis_line)
+    # em vez de forçar 2 linhas, o que faria uma única descrição comprida ditar
+    # a altura de toda a tabela. Isso mantém o empacotamento previsível: o
+    # tamanho da fonte só encolhe (até um mínimo legível) quando a quantidade
+    # de itens realmente não cabe, mesmo em uma linha cada.
     DEFAULT_HEADER_H = 20.0
     MIN_HEADER_H = 14.0
     MIN_ROW_SIZE = 5.0
-    PAD_PER_ROW = 5.0  # respiro vertical (posicionamento do texto + separador)
-
-    def linhas_necessarias(font_size: float) -> list[int]:
-        contagens = []
-        for row in rows:
-            maximo_colunas = max(
-                len(wrap_text(valor, "ProposalSans", font_size, col_w - 12))
-                for valor, col_w in zip(row, col_widths)
-            )
-            contagens.append(min(2, max(1, maximo_colunas)))
-        return contagens
+    PAD_PER_ROW = 3.0  # respiro vertical (posicionamento do texto + separador)
 
     row_size = row_size_base
     header_h = DEFAULT_HEADER_H
-    row_heights: list[float] | None = None
+    row_h = 0.0
     while row_size >= MIN_ROW_SIZE - 0.001:
         header_h = DEFAULT_HEADER_H if row_size >= row_size_base - 0.001 else MIN_HEADER_H
-        contagens = linhas_necessarias(row_size)
-        # Mesma fórmula de altura usada por draw_wrapped (tamanho da fonte + linhas
-        # extras multiplicadas pelo leading), para o texto realmente caber quando
-        # for desenhado com o max_height calculado a partir desta altura de linha.
-        candidatos = [row_size + max(0, n - 1) * row_size * 1.15 + PAD_PER_ROW for n in contagens]
-        if header_h + sum(candidatos) <= available:
-            row_heights = candidatos
+        row_h = row_size + PAD_PER_ROW
+        if header_h + num_rows * row_h <= available:
             break
         row_size = round(row_size - 0.25, 2)
-    if row_heights is None:
+    else:
         raise LayoutOverflowError(
             f"page_3.equipment_table: {num_rows} linhas ultrapassam o container "
             f"mesmo no tamanho mínimo de fonte ({MIN_ROW_SIZE} pt)"
@@ -627,18 +656,20 @@ def draw_equipment_table(
         cursor += col_w
 
     row_top = top - header_h
-    for index, (row, row_h) in enumerate(zip(rows, row_heights)):
+    # Reserva espaço acima da baseline proporcional ao "ascent" da fonte (a
+    # altura de letras como "l"/"h" acima da linha de base é maior do que os
+    # 3pt fixos usados antes), senão o texto encosta/invade a linha de cima
+    # quando row_h fica pequeno o bastante para múltiplos itens.
+    baseline_inset = min(row_h - 1.0, row_size * 0.8)
+    for index, row in enumerate(rows):
         if index % 2 == 0:
             c.setFillColor(Color(0.91, 0.95, 0.97, alpha=0.75))
             c.rect(x, row_top - row_h, w, row_h, fill=1, stroke=0)
         cursor = x
-        text_top_inset = 2.0
-        max_text_height = row_h - text_top_inset - 1.0
         for column_index, (value, col_w) in enumerate(zip(row, col_widths), 1):
-            draw_wrapped(
-                c, value, cursor + 6, row_top - text_top_inset, col_w - 12,
-                "ProposalSans", row_size, INK, leading=row_size * 1.15, max_lines=2,
-                min_size=row_size, max_height=max_text_height,
+            draw_ellipsis_line(
+                c, value, cursor + 6, row_top - baseline_inset, col_w - 12,
+                "ProposalSans", row_size, INK,
                 field_name=f"page_3.equipment_table.row_{index + 1}.column_{column_index}",
             )
             cursor += col_w
