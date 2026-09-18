@@ -1,0 +1,289 @@
+{
+  "meta": {
+    "template_version": "2.0.0",
+    "document_title": "Proposta Comercial de Energia Solar",
+    "proposal_number": "AS-2026-0042",
+    "version": "1",
+    "issue_date": "17/09/2026",
+    "valid_until": "27/09/2026",
+    "commercial_validity": "10 dias corridos",
+    "status": "Proposta enviada",
+    "disclaimer": "",
+    "page_label": "Página",
+    "page_total": 6,
+    "validity_days": 10
+  },
+  "assets": {
+    "logo": "assets/logo/alto-solar-logo.png",
+    "backgrounds": [
+      "assets/backgrounds/alto-solar-template-p01-capa.png",
+      "assets/backgrounds/alto-solar-template-p02-solucao.png",
+      "assets/backgrounds/alto-solar-template-p03-projeto.png",
+      "assets/backgrounds/alto-solar-template-p04-qualidade.png",
+      "assets/backgrounds/alto-solar-template-p05-investimento.png",
+      "assets/backgrounds/alto-solar-template-p06-condicoes.png"
+    ]
+  },
+  "company": {
+    "name": "Alto Solar",
+    "commercial_contact": "Maria Ferreira",
+    "phone": "(65) 99665-4179",
+    "cnpj": "22.483.694/0001-06",
+    "location": "Cuiabá — Mato Grosso"
+  },
+  "client": {
+    "name": "João Batista da Silva",
+    "city": "Várzea Grande — MT",
+    "installation_type": "Residencial",
+    "consumer_unit": "UC 7788990",
+    "utility": "Energisa Mato Grosso",
+    "consultant": "Maria Ferreira"
+  },
+  "project": {
+    "installed_power_kwp": 8.28,
+    "installed_power_display": "8,28 kWp",
+    "module_quantity": 12,
+    "module_power_w": 690,
+    "calculated_power": "12 x 690 W = 8.280 W",
+    "monthly_generation_kwh": 1080,
+    "monthly_generation_display": "1.080 kWh",
+    "annual_generation_kwh": 12960,
+    "annual_generation_display": "12.960 kWh",
+    "monthly_consumption_kwh": 1150,
+    "monthly_consumption_display": "1.150 kWh",
+    "annual_consumption_kwh": 13800,
+    "annual_consumption_display": "13.800 kWh",
+    "compensation_percent": 93.9,
+    "compensation_display": "93,9%",
+    "useful_area_m2": 46,
+    "useful_area_display": "46 m²",
+    "mounting_type": "Telhado cerâmico",
+    "location": "Várzea Grande — MT",
+    "generation_note": "A geração apresentada é uma estimativa e pode variar conforme incidência solar, orientação, inclinação, sombreamento, temperatura, condições climáticas e características do local de instalação."
+  },
+  "monthly_profile": {
+    "title": "Consumo x Geração",
+    "consumption_label": "Consumo",
+    "generation_label": "Geração",
+    "unit": "kWh",
+    "rows": [
+      {"month": "Out", "consumption": 1120, "generation": 1080},
+      {"month": "Nov", "consumption": 1180, "generation": 1080},
+      {"month": "Dez", "consumption": 1240, "generation": 1080},
+      {"month": "Jan", "consumption": 1260, "generation": 1080},
+      {"month": "Fev", "consumption": 1190, "generation": 1080},
+      {"month": "Mar", "consumption": 1150, "generation": 1080},
+      {"month": "Abr", "consumption": 1100, "generation": 1080},
+      {"month": "Mai", "consumption": 1080, "generation": 1080},
+      {"month": "Jun", "consumption": 1060, "generation": 1080},
+      {"month": "Jul", "consumption": 1070, "generation": 1080},
+      {"month": "Ago", "consumption": 1090, "generation": 1080},
+      {"month": "Set", "consumption": 1100, "generation": 1080}
+    ],
+    "totals": {
+      "annual_consumption": "13.800 kWh",
+      "annual_generation": "12.960 kWh",
+      "average_consumption": "1.150 kWh/mês",
+      "average_generation": "1.080 kWh/mês"
+    }
+  },
+  "equipment": {
+    "title": "Equipamentos e escopo técnico",
+    "headers": ["Item", "Fabricante / modelo", "Quantidade"],
+    "rows": [
+      ["Módulos fotovoltaicos", "Astronergy N-Type 690 W", "12 unidades"],
+      ["Inversor", "Deye monofásico 8 kW, 220 V", "1 unidade"],
+      ["Estrutura de sustentação", "Estrutura de alumínio para telhado cerâmico", "1 conjunto"]
+    ],
+    "area_label": "Área útil aproximada: 46 m²"
+  },
+  "services": [
+    "Análise técnica inicial",
+    "Dimensionamento do sistema",
+    "Projeto elétrico",
+    "Homologação junto à concessionária",
+    "Fornecimento dos equipamentos",
+    "Instalação da estrutura",
+    "Instalação dos módulos",
+    "Testes de funcionamento",
+    "Ativação do sistema"
+  ],
+  "warranties": [
+    {"title": "Garantia da instalação", "value": "1 ano"},
+    {"title": "Equipamentos", "value": "Conforme fabricante"},
+    {"title": "Performance", "value": "Conforme certificado"}
+  ],
+  "warranty_details": [
+    "Instalação: 1 ano",
+    "Módulos: certificado do fabricante",
+    "Inversor: condições do fabricante"
+  ],
+  "warranty_note": "Os prazos definitivos de garantia serão confirmados conforme os equipamentos efetivamente fornecidos e seus respectivos certificados.",
+  "differentials": [
+    "Atendimento próximo e especializado",
+    "Projeto dimensionado para cada cliente",
+    "Transparência em todas as etapas",
+    "Equipamentos de fornecedores reconhecidos",
+    "Instalação organizada e segura",
+    "Acompanhamento do projeto à ativação",
+    "Suporte após a entrega",
+    "Compromisso com qualidade e desempenho"
+  ],
+  "financial": {
+    "investment": "R$ 24.500,00",
+    "monthly_savings": "R$ 1.026,00",
+    "first_year_savings": "R$ 12.312,00",
+    "payback": "1 ano e 11 meses",
+    "savings_25_years": "R$ 372.487,00",
+    "tariff": "R$ 1,05 por kWh",
+    "compensation": "93,9%",
+    "energy_25_years": "324.000 kWh",
+    "analysis_period": "25 anos",
+    "note": "Os resultados financeiros são estimativas baseadas nas premissas apresentadas. A economia efetiva poderá variar conforme consumo, tarifa, regras de compensação, disponibilidade solar e desempenho real do sistema.",
+    "projection": [
+      {"year": 1, "label": "1 ano", "value": 12312, "display": "R$ 12.312"},
+      {"year": 5, "label": "5 anos", "value": 68983, "display": "R$ 68.983"},
+      {"year": 10, "label": "10 anos", "value": 158824, "display": "R$ 158.824"},
+      {"year": 15, "label": "15 anos", "value": 267706, "display": "R$ 267.706"},
+      {"year": 20, "label": "20 anos", "value": 315221, "display": "R$ 315.221"},
+      {"year": 25, "label": "25 anos", "value": 372487, "display": "R$ 372.487"}
+    ]
+  },
+  "payment_options": [
+    {
+      "title": "Opção 1 — À vista",
+      "lines": ["Valor: R$ 24.500,00", "Pagamento conforme contratação"]
+    },
+    {
+      "title": "Opção 2 — Financiamento",
+      "lines": ["Disponível mediante análise de crédito", "Taxas definidas pela instituição financeira"]
+    }
+  ],
+  "payment_note": "Condições definitivas confirmadas na contratação.",
+  "pages": {
+    "1": {
+      "title_lines": ["PROPOSTA COMERCIAL", "DE ENERGIA SOLAR"],
+      "subtitle": "Economia, segurança e energia para o seu futuro.",
+      "prepared_for_label": "Preparada para",
+      "system_label": "Sistema fotovoltaico de 8,28 kWp",
+      "footer_line": "Proposta AS-2026-0042 • Versão 1 • 17/09/2026",
+      "consultant_line": "Consultor responsável: Maria Ferreira"
+    },
+    "2": {
+      "title": "Energia inteligente para transformar sua conta em investimento",
+      "institutional": "A Alto Solar desenvolve soluções fotovoltaicas dimensionadas para as necessidades de cada cliente. Cuidamos de todas as etapas, da análise inicial à ativação do sistema, com atendimento próximo, transparência e compromisso com qualidade.",
+      "solution_title": "Uma solução pensada para você",
+      "solution_text": "Para João Batista da Silva, recomendamos um sistema de 8,28 kWp, projetado para gerar aproximadamente 12.960 kWh por ano e compensar cerca de 93,9% do consumo energético estimado.",
+      "project_facts": [
+        {"value_field": "installed_power_display", "label": "Potência instalada"},
+        {"value_field": "annual_generation_display", "label": "Geração anual"},
+        {"value_field": "compensation_display", "label": "Compensação estimada"}
+      ],
+      "flow_steps": [
+        {"number": "1", "label": "Captação solar"},
+        {"number": "2", "label": "Conversão pelo inversor"},
+        {"number": "3", "label": "Distribuição da energia"},
+        {"number": "4", "label": "Compensação do excedente"},
+        {"number": "5", "label": "Acompanhamento da geração"}
+      ],
+      "benefits": [
+        {"title": "Mais economia", "text": "Redução consistente da despesa com energia."},
+        {"title": "Proteção tarifária", "text": "Menor exposição aos reajustes de energia."},
+        {"title": "Energia sustentável", "text": "Geração limpa e renovável no próprio local."},
+        {"title": "Valorização do imóvel", "text": "Infraestrutura moderna e eficiente."},
+        {"title": "Suporte especializado", "text": "Acompanhamento antes, durante e após a entrega."}
+      ],
+      "bottom_cards": [
+        {"title": "Do projeto à ativação", "text": "Uma equipe acompanha cada etapa para garantir organização, segurança e clareza durante todo o processo."},
+        {"title": "Energia para o futuro", "text": "Produza sua própria energia e reduza a exposição aos constantes aumentos da tarifa elétrica."}
+      ]
+    },
+    "3": {
+      "title": "Uma solução dimensionada para sua necessidade",
+      "subtitle": "Conheça os principais números do projeto recomendado.",
+      "summary_line": "João Batista da Silva  •  Telhado cerâmico  •  Várzea Grande — MT  •  Energisa Mato Grosso",
+      "metric_cards": [
+        {"value": "8,28 kWp", "label": "Potência instalada"},
+        {"value": "1.080 kWh", "label": "Geração mensal"},
+        {"value": "12.960 kWh", "label": "Geração anual"},
+        {"value": "1.150 kWh", "label": "Consumo médio"},
+        {"value": "93,9%", "label": "Compensação estimada"}
+      ]
+    },
+    "4": {
+      "title": "Excelência do projeto à instalação",
+      "subtitle": "Qualidade técnica, organização e acompanhamento em todas as etapas.",
+      "services_title": "Serviços incluídos",
+      "warranty_note_title": "Garantias responsáveis",
+      "timeline_title": "Etapas do projeto",
+      "timeline": ["Análise", "Projeto", "Homologação", "Instalação", "Ativação", "Acompanhamento"],
+      "differentials_title": "Por que escolher a Alto Solar?"
+    },
+    "5": {
+      "page_title": "Investimento e retorno estimado",
+      "page_subtitle": "Premissas claras para uma decisão segura.",
+      "investment_title": "INVESTIMENTO TOTAL",
+      "investment_complement": "Uma solução completa para gerar economia por muitos anos.",
+      "metric_cards": [
+        {"value": "R$ 1.026,00", "label": "Economia média mensal"},
+        {"value": "R$ 12.312,00", "label": "Economia no primeiro ano"},
+        {"value": "1 ano e 11 meses", "label": "Payback estimado"}
+      ],
+      "projection_title": "Economia acumulada",
+      "payment_title": "Formas de pagamento",
+      "assumptions_title": "Premissas da simulação",
+      "assumptions": [
+        "Tarifa utilizada: R$ 1,05/kWh",
+        "Geração média: 1.080 kWh/mês",
+        "Consumo médio: 1.150 kWh/mês",
+        "Compensação estimada: 93,9%",
+        "Período analisado: 25 anos"
+      ],
+      "bottom_cards": [
+        {"title": "Economia estimada em 25 anos", "value": "R$ 372.487,00"},
+        {"title": "Energia gerada em 25 anos", "value": "324.000 kWh"}
+      ]
+    },
+    "6": {
+      "title": "Pronto para começar a economizar?",
+      "subtitle": "A Alto Solar está pronta para acompanhar seu projeto em todas as etapas.",
+      "commercial_title": "Condições comerciais",
+      "commercial_lines": [
+        "Investimento: R$ 24.500,00",
+        "Validade: 10 dias corridos",
+        "Emissão: 17/09/2026",
+        "Validade final: 27/09/2026",
+        "Prazo sujeito à vistoria e homologação"
+      ],
+      "included_title": "O que está incluído",
+      "included_lines": ["Equipamentos descritos", "Projeto", "Homologação", "Instalação", "Configuração", "Testes", "Ativação"],
+      "timeline": [
+        {"label": "Aceite", "icon": "accept"},
+        {"label": "Validação técnica", "icon": "validation"},
+        {"label": "Projeto", "icon": "project"},
+        {"label": "Instalação", "icon": "installation"},
+        {"label": "Ativação", "icon": "activation"}
+      ],
+      "conditions_title": "Condições importantes",
+      "conditions_text": "O dimensionamento definitivo está sujeito à validação técnica do local. Adequações civis, reforços estruturais, alterações no padrão de entrada ou serviços não descritos deverão ser avaliados separadamente. Os prazos podem variar conforme concessionária, disponibilidade dos equipamentos e condições climáticas.",
+      "contact_title": "Fale com a Alto Solar",
+      "contact_lines": ["Maria Ferreira", "(65) 99665-4179", "CNPJ: 22.483.694/0001-06", "Cuiabá — Mato Grosso"],
+      "qr_placeholder": "QR Code disponível na versão final",
+      "signatures": ["João Batista da Silva", "Alto Solar"],
+      "final_message": "Agradecemos a oportunidade de participar deste projeto. Será um prazer transformar energia em economia para você."
+    }
+  },
+  "header": {
+    "proposal_line": "Proposta AS-2026-0042",
+    "client_line": "João Batista da Silva"
+  },
+  "footer": {
+    "company_line": "Alto Solar",
+    "phone_line": "(65) 99665-4179",
+    "proposal_line": "AS-2026-0042 • Versão 1"
+  },
+  "qr": {
+    "available": false,
+    "url": ""
+  }
+}

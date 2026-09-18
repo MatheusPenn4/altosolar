@@ -1,0 +1,303 @@
+{
+  "meta": {
+    "template_version": "2.0.0",
+    "document_title": "Proposta Comercial de Energia Solar",
+    "proposal_number": "AS-2026-0001",
+    "version": "1",
+    "issue_date": "30/08/2026",
+    "valid_until": "14/09/2026",
+    "commercial_validity": "15 dias corridos",
+    "status": "Proposta demonstrativa",
+    "disclaimer": "MODELO DEMONSTRATIVO — SEM VALIDADE COMERCIAL",
+    "page_label": "Página",
+    "page_total": 6,
+    "validity_days": 15,
+    "demo_mode": true
+  },
+  "assets": {
+    "logo": "assets/logo/alto-solar-logo.png",
+    "backgrounds": [
+      "assets/backgrounds/alto-solar-template-p01-capa.png",
+      "assets/backgrounds/alto-solar-template-p02-solucao.png",
+      "assets/backgrounds/alto-solar-template-p03-projeto.png",
+      "assets/backgrounds/alto-solar-template-p04-qualidade.png",
+      "assets/backgrounds/alto-solar-template-p05-investimento.png",
+      "assets/backgrounds/alto-solar-template-p06-condicoes.png"
+    ]
+  },
+  "company": {
+    "name": "Alto Solar",
+    "commercial_contact": "Alessandro Penna",
+    "phone": "(65) 99665-4179",
+    "cnpj": "22.483.694/0001-06",
+    "location": "Cuiabá — Mato Grosso"
+  },
+  "client": {
+    "name": "Condomínio Residencial Aurora",
+    "city": "Cuiabá — MT",
+    "installation_type": "Condomínio residencial",
+    "consumer_unit": "UC Demonstrativa 000001",
+    "utility": "Energisa Mato Grosso",
+    "consultant": "Alessandro Penna"
+  },
+  "project": {
+    "installed_power_kwp": 17.55,
+    "installed_power_display": "17,55 kWp",
+    "module_quantity": 30,
+    "module_power_w": 585,
+    "calculated_power": "30 x 585 W = 17.550 W",
+    "monthly_generation_kwh": 2420,
+    "monthly_generation_display": "2.420 kWh",
+    "annual_generation_kwh": 29040,
+    "annual_generation_display": "29.040 kWh",
+    "monthly_consumption_kwh": 2500,
+    "monthly_consumption_display": "2.500 kWh",
+    "annual_consumption_kwh": 30000,
+    "annual_consumption_display": "30.000 kWh",
+    "compensation_percent": 96.8,
+    "compensation_display": "96,8%",
+    "useful_area_m2": 82,
+    "useful_area_display": "82 m²",
+    "mounting_type": "Telhado",
+    "location": "Cuiabá — MT",
+    "generation_note": "A geração apresentada é uma estimativa e pode variar conforme incidência solar, orientação, inclinação, sombreamento, temperatura, condições climáticas e características do local de instalação."
+  },
+  "monthly_profile": {
+    "title": "Consumo x Geração",
+    "consumption_label": "Consumo",
+    "generation_label": "Geração",
+    "unit": "kWh",
+    "rows": [
+      {"month": "Jan", "consumption": 2600, "generation": 2520},
+      {"month": "Fev", "consumption": 2480, "generation": 2290},
+      {"month": "Mar", "consumption": 2550, "generation": 2380},
+      {"month": "Abr", "consumption": 2440, "generation": 2310},
+      {"month": "Mai", "consumption": 2380, "generation": 2260},
+      {"month": "Jun", "consumption": 2320, "generation": 2160},
+      {"month": "Jul", "consumption": 2360, "generation": 2220},
+      {"month": "Ago", "consumption": 2410, "generation": 2350},
+      {"month": "Set", "consumption": 2490, "generation": 2480},
+      {"month": "Out", "consumption": 2580, "generation": 2600},
+      {"month": "Nov", "consumption": 2650, "generation": 2730},
+      {"month": "Dez", "consumption": 2740, "generation": 2740}
+    ],
+    "totals": {
+      "annual_consumption": "30.000 kWh",
+      "annual_generation": "29.040 kWh",
+      "average_consumption": "2.500 kWh/mês",
+      "average_generation": "2.420 kWh/mês"
+    }
+  },
+  "equipment": {
+    "title": "Equipamentos e escopo técnico",
+    "headers": ["Item", "Fabricante / modelo", "Quantidade"],
+    "rows": [
+      ["Módulos fotovoltaicos", "Ronma Solar N-Type bifacial 585 W", "30 unidades"],
+      ["Inversor", "Growatt monofásico 10 kW, 220 V, 3 MPPT", "1 unidade"],
+      ["Estrutura de sustentação", "Estrutura de alumínio para telhado", "1 conjunto"],
+      ["Proteções elétricas", "DPS, conectores e cabeamento solar", "1 conjunto"],
+      ["Projeto e homologação", "Projeto junto à concessionária", "1 serviço"],
+      ["Instalação e configuração", "Montagem, testes e ativação", "1 serviço"]
+    ],
+    "area_label": "Área útil aproximada: 82 m²"
+  },
+  "services": [
+    "Análise técnica inicial",
+    "Dimensionamento do sistema",
+    "Projeto elétrico",
+    "Homologação junto à concessionária",
+    "Fornecimento dos equipamentos",
+    "Instalação da estrutura",
+    "Instalação dos módulos",
+    "Instalação e configuração do inversor",
+    "Proteções elétricas",
+    "Testes de funcionamento",
+    "Ativação do sistema",
+    "Orientação ao cliente",
+    "Suporte pós-instalação"
+  ],
+  "warranties": [
+    {"title": "Garantia da instalação", "value": "1 ano"},
+    {"title": "Equipamentos", "value": "Conforme fabricante"},
+    {"title": "Performance", "value": "Conforme certificado"}
+  ],
+  "warranty_details": [
+    "Instalação: 1 ano",
+    "Módulos: certificado do fabricante",
+    "Performance: certificado do fabricante",
+    "Inversor: condições do fabricante",
+    "Estrutura e componentes: condições dos fabricantes"
+  ],
+  "warranty_note": "Os prazos definitivos de garantia serão confirmados conforme os equipamentos efetivamente fornecidos e seus respectivos certificados.",
+  "differentials": [
+    "Atendimento próximo e especializado",
+    "Projeto dimensionado para cada cliente",
+    "Transparência em todas as etapas",
+    "Equipamentos de fornecedores reconhecidos",
+    "Instalação organizada e segura",
+    "Acompanhamento do projeto à ativação",
+    "Suporte após a entrega",
+    "Compromisso com qualidade e desempenho"
+  ],
+  "financial": {
+    "investment": "R$ 32.900,00",
+    "monthly_savings": "R$ 2.175,00",
+    "first_year_savings": "R$ 26.100,00",
+    "payback": "1 ano e 3 meses",
+    "savings_25_years": "R$ 652.500,00",
+    "tariff": "R$ 0,94 por kWh",
+    "compensation": "96,8%",
+    "energy_25_years": "726.000 kWh",
+    "analysis_period": "25 anos",
+    "note": "Os resultados financeiros são estimativas baseadas nas premissas apresentadas. A economia efetiva poderá variar conforme consumo, tarifa, regras de compensação, disponibilidade solar e desempenho real do sistema.",
+    "projection": [
+      {"year": 1, "label": "1 ano", "value": 26100, "display": "R$ 26.100"},
+      {"year": 5, "label": "5 anos", "value": 130500, "display": "R$ 130.500"},
+      {"year": 10, "label": "10 anos", "value": 261000, "display": "R$ 261.000"},
+      {"year": 15, "label": "15 anos", "value": 391500, "display": "R$ 391.500"},
+      {"year": 20, "label": "20 anos", "value": 522000, "display": "R$ 522.000"},
+      {"year": 25, "label": "25 anos", "value": 652500, "display": "R$ 652.500"}
+    ]
+  },
+  "payment_options": [
+    {
+      "title": "Opção 1 — À vista",
+      "lines": ["Valor: R$ 32.900,00", "Pagamento conforme contratação"]
+    },
+    {
+      "title": "Opção 2 — Parcelamento demonstrativo",
+      "lines": ["Entrada: R$ 6.580,00", "Saldo: 10 parcelas de R$ 2.632,00", "Total: R$ 32.900,00"]
+    },
+    {
+      "title": "Opção 3 — Financiamento",
+      "lines": ["Disponível mediante análise de crédito", "Taxas definidas pela instituição financeira"]
+    }
+  ],
+  "payment_note": "Condições definitivas confirmadas na contratação.",
+  "pages": {
+    "1": {
+      "title_lines": ["PROPOSTA COMERCIAL", "DE ENERGIA SOLAR"],
+      "subtitle": "Economia, segurança e energia para o seu futuro.",
+      "prepared_for_label": "Preparada para",
+      "system_label": "Sistema fotovoltaico de 17,55 kWp",
+      "footer_line": "Proposta AS-2026-0001 • Versão 1 • 30/08/2026",
+      "consultant_line": "Consultor responsável: Alessandro Penna"
+    },
+    "2": {
+      "title": "Energia inteligente para transformar sua conta em investimento",
+      "institutional": "A Alto Solar desenvolve soluções fotovoltaicas dimensionadas para as necessidades de cada cliente. Cuidamos de todas as etapas, da análise inicial à ativação do sistema, com atendimento próximo, transparência e compromisso com qualidade.",
+      "solution_title": "Uma solução pensada para você",
+      "solution_text": "Para o Condomínio Residencial Aurora, recomendamos um sistema de 17,55 kWp, projetado para gerar aproximadamente 29.040 kWh por ano e compensar cerca de 96,8% do consumo energético estimado.",
+      "project_facts": [
+        {"value_field": "installed_power_display", "label": "Potência instalada"},
+        {"value_field": "annual_generation_display", "label": "Geração anual"},
+        {"value_field": "compensation_display", "label": "Compensação estimada"}
+      ],
+      "flow_steps": [
+        {"number": "1", "label": "Captação solar"},
+        {"number": "2", "label": "Conversão pelo inversor"},
+        {"number": "3", "label": "Distribuição da energia"},
+        {"number": "4", "label": "Compensação do excedente"},
+        {"number": "5", "label": "Acompanhamento da geração"}
+      ],
+      "benefits": [
+        {"title": "Mais economia", "text": "Redução consistente da despesa com energia."},
+        {"title": "Proteção tarifária", "text": "Menor exposição aos reajustes de energia."},
+        {"title": "Energia sustentável", "text": "Geração limpa e renovável no próprio local."},
+        {"title": "Valorização do imóvel", "text": "Infraestrutura moderna e eficiente."},
+        {"title": "Suporte especializado", "text": "Acompanhamento antes, durante e após a entrega."}
+      ],
+      "bottom_cards": [
+        {"title": "Do projeto à ativação", "text": "Uma equipe acompanha cada etapa para garantir organização, segurança e clareza durante todo o processo."},
+        {"title": "Energia para o futuro", "text": "Produza sua própria energia e reduza a exposição aos constantes aumentos da tarifa elétrica."}
+      ]
+    },
+    "3": {
+      "title": "Uma solução dimensionada para sua necessidade",
+      "subtitle": "Conheça os principais números do projeto recomendado.",
+      "summary_line": "Condomínio Residencial Aurora  •  Telhado  •  Cuiabá — MT  •  Energisa Mato Grosso",
+      "metric_cards": [
+        {"value": "17,55 kWp", "label": "Potência instalada"},
+        {"value": "2.420 kWh", "label": "Geração mensal"},
+        {"value": "29.040 kWh", "label": "Geração anual"},
+        {"value": "2.500 kWh", "label": "Consumo médio"},
+        {"value": "96,8%", "label": "Compensação estimada"}
+      ]
+    },
+    "4": {
+      "title": "Excelência do projeto à instalação",
+      "subtitle": "Qualidade técnica, organização e acompanhamento em todas as etapas.",
+      "services_title": "Serviços incluídos",
+      "warranty_note_title": "Garantias responsáveis",
+      "timeline_title": "Etapas do projeto",
+      "timeline": ["Análise", "Projeto", "Homologação", "Instalação", "Ativação", "Acompanhamento"],
+      "differentials_title": "Por que escolher a Alto Solar?"
+    },
+    "5": {
+      "page_title": "Investimento e retorno estimado",
+      "page_subtitle": "Premissas claras para uma decisão segura.",
+      "investment_title": "INVESTIMENTO TOTAL",
+      "investment_complement": "Uma solução completa para gerar economia por muitos anos.",
+      "metric_cards": [
+        {"value": "R$ 2.175,00", "label": "Economia média mensal"},
+        {"value": "R$ 26.100,00", "label": "Economia no primeiro ano"},
+        {"value": "1 ano e 3 meses", "label": "Payback estimado"}
+      ],
+      "projection_title": "Economia acumulada",
+      "payment_title": "Formas de pagamento",
+      "assumptions_title": "Premissas da simulação",
+      "assumptions": [
+        "Tarifa utilizada: R$ 0,94/kWh",
+        "Geração média: 2.420 kWh/mês",
+        "Consumo médio: 2.500 kWh/mês",
+        "Compensação estimada: 96,8%",
+        "Período analisado: 25 anos"
+      ],
+      "bottom_cards": [
+        {"title": "Economia estimada em 25 anos", "value": "R$ 652.500,00"},
+        {"title": "Energia gerada em 25 anos", "value": "726.000 kWh"}
+      ]
+    },
+    "6": {
+      "title": "Pronto para começar a economizar?",
+      "subtitle": "A Alto Solar está pronta para acompanhar seu projeto em todas as etapas.",
+      "commercial_title": "Condições comerciais",
+      "commercial_lines": [
+        "Investimento: R$ 32.900,00",
+        "Validade: 15 dias corridos",
+        "Emissão: 30/08/2026",
+        "Validade final: 14/09/2026",
+        "Prazo sujeito à vistoria e homologação"
+      ],
+      "included_title": "O que está incluído",
+      "included_lines": ["Equipamentos descritos", "Projeto", "Homologação", "Instalação", "Configuração", "Testes", "Ativação", "Orientação ao cliente"],
+      "timeline": [
+        {"label": "Aceite", "icon": "accept"},
+        {"label": "Validação técnica", "icon": "validation"},
+        {"label": "Projeto", "icon": "project"},
+        {"label": "Instalação", "icon": "installation"},
+        {"label": "Ativação", "icon": "activation"}
+      ],
+      "conditions_title": "Condições importantes",
+      "conditions_text": "O dimensionamento definitivo está sujeito à validação técnica do local. Adequações civis, reforços estruturais, alterações no padrão de entrada ou serviços não descritos deverão ser avaliados separadamente. Os prazos podem variar conforme concessionária, disponibilidade dos equipamentos e condições climáticas.",
+      "contact_title": "Fale com a Alto Solar",
+      "contact_lines": ["Alessandro Penna", "(65) 99665-4179", "CNPJ: 22.483.694/0001-06", "Cuiabá — Mato Grosso"],
+      "qr_placeholder": "QR Code disponível na versão final",
+      "signatures": ["Condomínio Residencial Aurora", "Alto Solar"],
+      "final_message": "Agradecemos a oportunidade de participar deste projeto. Será um prazer transformar energia em economia para você."
+    }
+  },
+  "header": {
+    "proposal_line": "Proposta AS-2026-0001",
+    "client_line": "Condomínio Residencial Aurora"
+  },
+  "footer": {
+    "company_line": "Alto Solar",
+    "phone_line": "(65) 99665-4179",
+    "proposal_line": "AS-2026-0001 • Versão 1"
+  },
+  "qr": {
+    "available": false,
+    "url": ""
+  }
+}

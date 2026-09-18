@@ -1,0 +1,7 @@
+# Dependências da função Python da Vercel (api/gerar-proposta-pdf.py) que
+# renderiza o PDF de seis páginas da proposta comercial. A Vercel instala este
+# arquivo automaticamente para toda função Python do projeto.
+reportlab==4.4.9
+Pillow==12.3.0
+pypdf==6.10.0
+tzdata==2025.2
