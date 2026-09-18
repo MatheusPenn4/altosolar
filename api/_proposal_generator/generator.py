@@ -555,8 +555,8 @@ def draw_equipment_table(
     title_inset = layout.get("titleInsetPt", 12)
     table_inset = layout.get("tableInsetPt", 32)
     title_size = layout.get("titleFontSize", 10.5)
-    header_size = layout.get("headerFontSize", 7)
-    row_size = layout.get("rowFontSize", 6.5)
+    header_size_base = layout.get("headerFontSize", 7)
+    row_size_base = layout.get("rowFontSize", 6.5)
     area_size = layout.get("areaFontSize", 7)
     draw_wrapped(
         c, equipment["title"], x, y + h - title_inset + title_size, w,
@@ -565,29 +565,54 @@ def draw_equipment_table(
     )
     top = y + h - table_inset
     col_widths = [w * 0.29, w * 0.52, w * 0.19]
-    num_rows = len(equipment["rows"])
+    rows = equipment["rows"]
+    num_rows = len(rows)
     lowest_allowed = y + 5
-
-    # Orçamentos reais podem ter bem mais itens do que a demonstração original
-    # (que assumia sempre 6). Em vez de falhar sempre que a lista é maior,
-    # encolhe a altura de linha/cabeçalho (e a fonte, proporcionalmente) até
-    # um mínimo legível antes de desistir e sinalizar overflow de verdade.
-    DEFAULT_HEADER_H, DEFAULT_ROW_H = 20.0, 20.0
-    MIN_HEADER_H, MIN_ROW_H = 14.0, 9.0
     available = (top - lowest_allowed) - area_size - 9
-    if DEFAULT_HEADER_H + num_rows * DEFAULT_ROW_H <= available:
-        header_h, row_h = DEFAULT_HEADER_H, DEFAULT_ROW_H
-    else:
-        header_h = MIN_HEADER_H
-        row_h = (available - header_h) / num_rows if num_rows > 0 else 0
-        if row_h < MIN_ROW_H:
-            raise LayoutOverflowError(
-                f"page_3.equipment_table: {num_rows} linhas ultrapassam o container "
-                f"mesmo no tamanho mínimo de linha ({MIN_ROW_H} pt)"
+    if num_rows == 0 or available <= 0:
+        raise LayoutOverflowError("page_3.equipment_table: sem espaço disponível para a tabela")
+
+    # Orçamentos reais variam muito no número de itens e no tamanho das
+    # descrições (a demonstração original assumia sempre 6 itens curtos). Em
+    # vez de uma altura de linha fixa, cada linha ganha 1 ou 2 linhas de texto
+    # conforme o que ela realmente precisa (colunas "Item" e "Fabricante/
+    # modelo"), e o tamanho da fonte só encolhe (até um mínimo legível) se a
+    # soma de todas as linhas ainda não couber no espaço do template.
+    DEFAULT_HEADER_H = 20.0
+    MIN_HEADER_H = 14.0
+    MIN_ROW_SIZE = 5.0
+    PAD_PER_ROW = 5.0  # respiro vertical (posicionamento do texto + separador)
+
+    def linhas_necessarias(font_size: float) -> list[int]:
+        contagens = []
+        for row in rows:
+            maximo_colunas = max(
+                len(wrap_text(valor, "ProposalSans", font_size, col_w - 12))
+                for valor, col_w in zip(row, col_widths)
             )
-    header_size = header_size if header_h >= 18 else max(6.0, header_size * (header_h / DEFAULT_HEADER_H))
-    row_size = row_size if row_h >= 18 else max(5.5, row_size * (row_h / DEFAULT_ROW_H))
-    row_max_lines = 2 if row_h >= 16 else 1
+            contagens.append(min(2, max(1, maximo_colunas)))
+        return contagens
+
+    row_size = row_size_base
+    header_h = DEFAULT_HEADER_H
+    row_heights: list[float] | None = None
+    while row_size >= MIN_ROW_SIZE - 0.001:
+        header_h = DEFAULT_HEADER_H if row_size >= row_size_base - 0.001 else MIN_HEADER_H
+        contagens = linhas_necessarias(row_size)
+        # Mesma fórmula de altura usada por draw_wrapped (tamanho da fonte + linhas
+        # extras multiplicadas pelo leading), para o texto realmente caber quando
+        # for desenhado com o max_height calculado a partir desta altura de linha.
+        candidatos = [row_size + max(0, n - 1) * row_size * 1.15 + PAD_PER_ROW for n in contagens]
+        if header_h + sum(candidatos) <= available:
+            row_heights = candidatos
+            break
+        row_size = round(row_size - 0.25, 2)
+    if row_heights is None:
+        raise LayoutOverflowError(
+            f"page_3.equipment_table: {num_rows} linhas ultrapassam o container "
+            f"mesmo no tamanho mínimo de fonte ({MIN_ROW_SIZE} pt)"
+        )
+    header_size = header_size_base if header_h >= 18 else max(6.0, header_size_base * (header_h / DEFAULT_HEADER_H))
 
     c.setFillColor(NAVY)
     c.roundRect(x, top - header_h, w, header_h, 3, fill=1, stroke=0)
@@ -600,26 +625,30 @@ def draw_equipment_table(
             min_size=6.0, field_name=f"page_3.equipment_table.header.{header}",
         )
         cursor += col_w
-    for index, row in enumerate(equipment["rows"]):
-        row_top = top - header_h - index * row_h
+
+    row_top = top - header_h
+    for index, (row, row_h) in enumerate(zip(rows, row_heights)):
         if index % 2 == 0:
             c.setFillColor(Color(0.91, 0.95, 0.97, alpha=0.75))
             c.rect(x, row_top - row_h, w, row_h, fill=1, stroke=0)
         cursor = x
+        text_top_inset = 2.0
+        max_text_height = row_h - text_top_inset - 1.0
         for column_index, (value, col_w) in enumerate(zip(row, col_widths), 1):
             draw_wrapped(
-                c, value, cursor + 6, row_top - min(3.0, row_h * 0.25), col_w - 12,
-                "ProposalSans", row_size, INK, leading=row_size * 1.15, max_lines=row_max_lines,
-                min_size=5.0,
+                c, value, cursor + 6, row_top - text_top_inset, col_w - 12,
+                "ProposalSans", row_size, INK, leading=row_size * 1.15, max_lines=2,
+                min_size=row_size, max_height=max_text_height,
                 field_name=f"page_3.equipment_table.row_{index + 1}.column_{column_index}",
             )
             cursor += col_w
         c.setStrokeColor(LIGHT)
         c.setLineWidth(0.35)
         c.line(x, row_top - row_h, x + w, row_top - row_h)
+        row_top -= row_h
     c.setFillColor(CYAN_DARK)
     c.setFont("ProposalSans-Bold", area_size)
-    c.drawString(x + 6, top - header_h - num_rows * row_h - 8, equipment["area_label"])
+    c.drawString(x + 6, row_top - 8, equipment["area_label"])
 
 
 def draw_page_3(c: canvas.Canvas, data: dict, fields: dict, logo_path: Path) -> None:

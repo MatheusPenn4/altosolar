@@ -65,10 +65,16 @@ def test_missing_client_name_raises():
 
 def test_equipment_table_shrinks_to_fit_many_rows():
     """Orçamentos reais frequentemente têm mais itens do que a demonstração
-    original (que sempre tinha 6). A tabela deve encolher altura/fonte em vez
-    de falhar — regressão do bug reportado em produção com 12 itens."""
+    original (que sempre tinha 6), e descrições que exigem 2 linhas mesmo
+    quando a tabela está compacta — regressão de dois bugs reportados em
+    produção: 12 itens ultrapassando o container, e depois uma descrição
+    longa (que precisa de 2 linhas) sendo rejeitada por causa de uma altura
+    de linha uniforme baixa demais. Alturas de linha agora são calculadas por
+    item, então itens curtos ficam compactos e o item com nome longo recebe
+    o dobro do espaço."""
     data = load("realistic-many-items-data.json")
     assert len(data["equipment"]["rows"]) == 12
+    assert len(data["equipment"]["rows"][0][0]) > 50  # descrição longa, precisa de 2 linhas
     result = generate_proposal(data)
     assert result.pages == 6
 
